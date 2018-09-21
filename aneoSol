@@ -1,0 +1,52 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution {
+
+    private static int validateSpeed(List<Integer>dists,List<Integer>durations,int speed){
+        int sp=speed;
+       // boolean bestSpeed=false;
+        int speedDebug=0;
+        boolean validateSpeed=false;
+        while(sp>0&&!validateSpeed){
+            validateSpeed=true;
+            int j=0;
+            double spM=sp*10/36.0;
+            if(sp< speedDebug) System.out.println("speed: "+sp);
+            if(sp< speedDebug) System.out.println("speed meter: "+spM);
+            while(j<dists.size()&&validateSpeed){ 
+               double time=Math.round((dists.get(j)/spM)*10)/10.0;
+               validateSpeed&=((time/durations.get(j))%2<1);
+              if(sp< speedDebug) System.out.println("time: "+time+"\nperiode: "+durations.get(j)+"\ndist: "+dists.get(j));
+              if(sp< speedDebug) System.out.println("nb: "+time/durations.get(j));
+                j++;
+            }
+            //System.out.println("validate: "+validateSpeed);
+            if(!validateSpeed){sp--;}
+        }
+        return sp;
+    } 
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int speed = in.nextInt();
+        int lightCount = in.nextInt();
+        List<Integer> distances=new ArrayList<>();
+        List<Integer> durations=new ArrayList<>();
+        for (int i = 0; i < lightCount; i++) {
+             distances.add(in.nextInt());
+             durations.add(in.nextInt());
+        }
+        
+        
+        // Write an action using System.out.println()
+        // To debug: System.err.println("Debug messages...");
+
+        System.out.println(validateSpeed(distances,durations,speed));
+    }
+}
