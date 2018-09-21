@@ -1,0 +1,53 @@
+class Player {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int width = in.nextInt(); // the number of cells on the X axis
+        int height = in.nextInt(); // the number of cells on the Y axis
+        String lineSol="";
+        if (in.hasNextLine()) {
+            in.nextLine();
+        }
+        Boolean [][] saw=new Boolean[height][];
+        for (int i = 0; i < height; i++) {
+            String line = in.nextLine(); // width characters, each either 0 or .
+             saw[i]=new Boolean[line.length()]; 
+             for(int j=0;j<line.length();j++){
+                    saw[i][j]=false; 
+                    if(line.charAt(j)=='0'){
+                        if(i+1< height){
+                            if(j+1<line.length()){
+                                 saw[i][j]=true;
+                                 System.out.print(j+" "+i+" ");
+                                      
+                            }
+                            else if(i>0&&saw[i-1][j]||saw[i][j-1]){
+                                     System.out.print(j+" "+i+" ");       
+                                  } 
+                        }
+                        else{
+                             if(i>0&&saw[i-1][j]){
+                                     System.out.print(j+" "+i+" ");       
+                            } 
+                        }
+                    }
+                    else{
+                        if(i!=0){
+                             if(saw[i-1][j]&&line.charAt(j)=='.'){
+                                        System.out.print(j+" "+i+" ");       
+                            }      
+                        }   
+                    }
+                }
+            }
+          
+        
+
+        // Write an action using System.out.println()
+        // To debug: System.err.println("Debug messages...");
+
+
+        // Three coordinates: a node, its right neighbor, its bottom neighbor
+        System.out.println();
+    }
+}
