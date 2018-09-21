@@ -1,53 +1,75 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Don't let the machines win. You are humanity's last hope...
+ **/
 class Player {
+    
+    
+    static void sub_analyse(String line,int i,Scanner in,int height,String nLine){
+        for(int j=0;j<line.length();j++){
+                 if(estNoeud(line.charAt(j))){
+                    System.out.print(j+" "+i+" ");
+                    if(j+1<line.length()){
+                        if(estNoeud(line.charAt(j+1))){
+                         System.out.print(j+1+" "+i+" ");
+                        }
+                        else{
+                           System.out.print("-1"+" "+"-1"+" ");
+                        }
+                    }
+                    else{
+                        System.out.print("-1"+" "+"-1"+" ");
+                    }
+                    if(i+1<height){
+                       // System.out.println(aFilsGauche(nLine,j,i+1));
+                            
+                    }
+                    else{
+                    //    System.out.println("-1"+" "+"-1"+" ");
+                    }
+                 }
+        }        
+    }
+    static  private String analyseLigne(String line,int i,Scanner in,int height){
+        String nLine=in.nextLine();
+         sub_analyse(line,i,in,height,nLine);
+        return nLine;
+        
+    }
+    
+    static private String aFilsGauche(String line,int j,int i){
+        if(estNoeud(line.charAt(j))){
+            return j+" "+i;
+        }
+        else{
+            return "-1 -1";
+        }
+    }
+    
+    static private boolean estNoeud(char c){
+        return c=='0';
+    }
+  
 
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
         int width = in.nextInt(); // the number of cells on the X axis
         int height = in.nextInt(); // the number of cells on the Y axis
-        String lineSol="";
         if (in.hasNextLine()) {
             in.nextLine();
         }
-        Boolean [][] saw=new Boolean[height][];
+        String line = in.nextLine(); // width characters, each either 0 or .
         for (int i = 0; i < height; i++) {
-            String line = in.nextLine(); // width characters, each either 0 or .
-             saw[i]=new Boolean[line.length()]; 
-             for(int j=0;j<line.length();j++){
-                    saw[i][j]=false; 
-                    if(line.charAt(j)=='0'){
-                        if(i+1< height){
-                            if(j+1<line.length()){
-                                 saw[i][j]=true;
-                                 System.out.print(j+" "+i+" ");
-                                      
-                            }
-                            else if(i>0&&saw[i-1][j]||saw[i][j-1]){
-                                     System.out.print(j+" "+i+" ");       
-                                  } 
-                        }
-                        else{
-                             if(i>0&&saw[i-1][j]||saw[i][j-1]){
-                                     System.out.print(j+" "+i+" ");       
-                            } 
-                        }
-                    }
-                    else{
-                        if(i!=0){
-                             if(saw[i-1][j]&&line.charAt(j)=='.'){
-                                        System.out.print(j+" "+i+" ");       
-                            }      
-                        }   
-                    }
-                }
+            if(i+1<height){
+               line=analyseLigne(line,i,in,height);
             }
-          
-        
-
-        // Write an action using System.out.println()
-        // To debug: System.err.println("Debug messages...");
-
-
-        // Three coordinates: a node, its right neighbor, its bottom neighbor
-        System.out.println();
+            else{
+               sub_analyse(line,i,in,height,"");
+                
+            }  
+        }
     }
 }
