@@ -1,0 +1,57 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player {
+    static long minX,minY;
+    static long maxX,maxY;
+
+    static long nextX(String dir,long x){
+        
+        if(dir.contains("R")){
+              minX=x;
+             x=(maxX+x)/2;
+        }
+        if(dir.contains("L")){
+             maxX=x;
+             x=(x+minX)/2;
+        }
+        return x;
+    }
+    
+     static long nextY(String dir,long y){
+        if(dir.contains("U")){
+            maxY=y;
+            y=(y+minY)/2;
+        }
+        if(dir.contains("D")){
+            minY=y;
+            y=(maxY+y)/2;
+        }
+        return y;
+    } 
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int W = in.nextInt(); // width of the building.
+        int H = in.nextInt(); // height of the building.
+        int N = in.nextInt(); // maximum number of turns before game over.
+        long X0 = in.nextInt();
+        long Y0 = in.nextInt();
+        minX=0;
+        maxX=W;
+        minY=0;
+        maxY=H;
+        // game loop
+        while (true) {
+            String bombDir = in.next(); // the direction of the bombs from batman's current location (U, UR, R, DR, D, DL, L or UL)
+            X0=nextX(bombDir,X0);
+            Y0=nextY(bombDir,Y0);
+            // the location of the next window Batman should jump to.
+            System.out.println(X0+" "+Y0);
+        }
+    }
+}
