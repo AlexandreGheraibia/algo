@@ -1,0 +1,23 @@
+import sys
+import math
+
+# Auto-generated code below aims at helping you parse
+# the standard input according to the problem statement.
+
+n = int(raw_input())  # the number of temperatures to analyse
+min=sys.maxsize
+for i in raw_input().split():
+    # t: a temperature expressed as an integer ranging from -273 to 5526
+    t = int(i)
+    if abs(t)==abs(min) :
+        if(t*min<0):
+            min=abs(min)
+    else:
+        if abs(min)>abs(t):
+            min=t;
+if min==sys.maxsize:
+    min=0
+# Write an action using print
+# To debug: print >> sys.stderr, "Debug messages..."
+
+print min
