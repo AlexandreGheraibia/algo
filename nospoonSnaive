@@ -1,53 +1,134 @@
-class Player {
+import java.util.*;
+import java.io.*;
+import java.math.*;
 
+/**
+ * Don't let the machines win. You are humanity's last hope...
+ **/
+class Leaf{
+       private int i;
+       private int j;
+       private Leaf g=null;
+       private Leaf d=null;
+       
+       public void setI(int i){
+            this.i=i;
+       }
+       
+       public void setJ(int j){
+            this.j=j;
+       }
+       
+       public int getI(){
+        return this.i;    
+       }
+       
+       public int getJ(){
+        return this.j;    
+       }
+       
+       public void setFilsGauche(Leaf g){
+            this.g=g;
+       }
+       
+       public void setFilsDroit(Leaf d){
+            this.d=d;
+       }
+       
+       public Leaf getFilsGauche(){
+         return this.g;
+       }
+       
+       public Leaf getFilsDroit(){
+         return this.d;
+        }
+        
+       public String toString(){
+            return j+" "+i;
+        }
+}
+    
+class Player {
+    static void estUnFilsGauche(List<Leaf> arbre,int k,int i){
+        int j=arbre.size()-1;
+        while(0<=j&&!estFilsGaucheDe(arbre.get(j),k,i)){
+            j--;
+        }
+    }
+
+    static boolean estFilsGaucheDe(Leaf tete,int j,int i){
+            Leaf leafCour=tete;
+            while(leafCour!=null&&leafCour.getJ()<j){
+                leafCour=leafCour.getFilsDroit();
+            }
+            if(leafCour!=null&&leafCour.getJ()==j){        
+                leafCour.setFilsGauche(new Leaf());
+                leafCour.getFilsGauche().setI(i);
+                leafCour.getFilsGauche().setJ(j);
+                return true;
+            }
+            return false;
+    }
+    
+    static void affiche(List<Leaf> arbre){
+    
+        for(Leaf node : arbre){
+            while(node!=null){
+                System.out.print(node+" ");
+                System.out.print( node.getFilsDroit()!=null ? node.getFilsDroit()+" ":"-1 -1 ");
+                System.out.println(node.getFilsGauche()!=null ? node.getFilsGauche():"-1 -1");
+                node=node.getFilsDroit();
+            }
+            
+        }
+    }
+   
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
         int width = in.nextInt(); // the number of cells on the X axis
         int height = in.nextInt(); // the number of cells on the Y axis
-        String lineSol="";
+        
+       
         if (in.hasNextLine()) {
             in.nextLine();
         }
-        Boolean [][] saw=new Boolean[height][];
-        for (int i = 0; i < height; i++) {
-            String line = in.nextLine(); // width characters, each either 0 or .
-             saw[i]=new Boolean[line.length()]; 
-             for(int j=0;j<line.length();j++){
-                    saw[i][j]=false; 
-                    if(line.charAt(j)=='0'){
-                        if(i+1< height){
-                            if(j+1<line.length()){
-                                 saw[i][j]=true;
-                                 System.out.print(j+" "+i+" ");
-                                      
-                            }
-                            else if(i>0&&saw[i-1][j]||saw[i][j-1]){
-                                     System.out.print(j+" "+i+" ");       
-                                  } 
-                        }
-                        else{
-                             if(i>0&&saw[i-1][j]||saw[i][j-1]){
-                                     System.out.print(j+" "+i+" ");       
-                            } 
-                        }
-                    }
-                    else{
-                        if(i!=0){
-                             if(saw[i-1][j]&&line.charAt(j)=='.'){
-                                        System.out.print(j+" "+i+" ");       
-                            }      
-                        }   
-                    }
-                }
-            }
-          
         
-
-        // Write an action using System.out.println()
-        // To debug: System.err.println("Debug messages...");
-
-
-        // Three coordinates: a node, its right neighbor, its bottom neighbor
-        System.out.println();
-    }
-}
+        String line; // width characters, each either 0 or .
+        boolean droit;
+        //construction de toute les branches droites
+        List<Leaf>arbre=new ArrayList<>();
+        
+        for (int i = 0; i < height; i++) {
+            int j=0;
+            line = in.nextLine(); 
+            Leaf branche=null;
+            Leaf tete=null;
+            droit=false;
+            while(j<line.length()){
+                
+               if(line.charAt(j)=='0'){
+                  if(arbre.size()!=0){
+                    estUnFilsGauche(arbre,j,i);
+                  }
+                  if(droit){
+                    branche.setFilsDroit(new Leaf());
+                    branche.getFilsDroit().setI(i);
+                    branche.getFilsDroit().setJ(j);
+                    branche=branche.getFilsDroit();
+                  }
+                  else{
+                      branche=new Leaf();
+                      branche.setI(i);
+                      branche.setJ(j);
+                      tete=branche;
+                      droit=true;
+                  }
+               }
+                j++;    
+            }
+            if(tete!=null){
+                arbre.add(tete);
+            }
+        }
+        affiche(arbre);
+    
