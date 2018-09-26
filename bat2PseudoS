@@ -1,0 +1,160 @@
+using System;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player
+{
+     static int oldX;
+     static int oldY;
+     static int oldMaxY;
+     static int oldMinY;
+     static int oldMaxX;
+     static int oldMinX;
+     
+     static void moveX(ref int x,ref int max,ref int min,int sens){
+            oldX=x;
+            oldMaxX=max;
+            oldMinX=min;
+            ;
+            if(sens==1){//RIGHT
+                min=x;
+                x=(x+max+1)/2;
+            }
+            else{  //LEFT
+                max=x;
+                x=(x+min+1)/2;
+            }
+     }
+    
+     static void moveY(ref int y,ref int max,ref int min,int sens){
+            oldY=y;
+            oldMaxY=max;
+            oldMinY=min;
+            if(sens==1){//UP
+              
+                y=(y+max)/2;
+                min=oldY;
+            }
+            else{//DOWN
+                y=(y+min)/2;
+               
+                max=oldY;
+            }
+     }
+     static void moveToMiddle(ref int x,ref int y, int w, int h){
+        x=w/2;
+        y=h/2;
+        
+    }
+    static void Main(string[] args)
+    {
+        string[] inputs;
+        inputs = Console.ReadLine().Split(' ');
+        int W = int.Parse(inputs[0]); // width of the building.
+        int H = int.Parse(inputs[1]); // height of the building.
+        int N = int.Parse(Console.ReadLine()); // maximum number of turns before game over.
+        inputs = Console.ReadLine().Split(' ');
+        int X0 = int.Parse(inputs[0]);
+        int Y0 = int.Parse(inputs[1]);
+        int minX=0,maxX=W-1;
+        int minY=H,maxY=0;
+        int sensX=1;
+        int sensY=1;
+        bool moveOnY=true;
+        bool axeChange=false;
+        bool properDir=true;
+       
+        // game loop
+        while (true)
+        {
+            string bombDir = Console.ReadLine(); // Current distance to the bomb compared to previous distance (COLDER, WARMER, SAME or UNKNOWN)
+           // Console.Error.WriteLine(X0+" "+minX+" "+maxX);
+            switch(bombDir){
+                case "UNKNOWN":
+                 
+                   moveX(ref X0,ref maxX,ref minX,sensX);
+                   moveY(ref Y0,ref maxY,ref minY,sensY);
+                 
+                break;
+                
+                case "WARMER":
+                   properDir=true;
+                   if(moveOnY){
+                           moveY(ref Y0,ref maxY,ref minY,sensY);
+                    }
+                   else{
+                       moveX(ref X0,ref maxX,ref minX,sensX);
+                       moveOnY=(minX==X0&&maxX==X0);
+                      if(moveOnY){
+                           moveY(ref Y0,ref maxY,ref minY,sensY);
+                           properDir=false;
+                      }
+                   }
+                break;
+                
+                case "COLDER":
+                if(properDir){
+                    
+                    if(moveOnY){
+                       sensY*=-1;
+                        {    if(sensY==1){
+                                minY=Y0;
+                                maxY=oldMaxY;
+                             }
+                             else{
+                                minY=oldMinY;
+                                maxY=Y0;
+                             }
+                           Y0=oldY; 
+                          moveY(ref Y0,ref maxY,ref minY,sensY);
+                           
+                        }
+                        
+                     }
+                     else{
+                        sensX=-1*sensX;   
+                        moveX(ref X0,ref maxX,ref minX,sensX);
+                        moveOnY=(minX==X0&&maxX==X0);
+                        if(moveOnY){
+                          moveY(ref Y0,ref maxY,ref minY,sensY);
+                          properDir=false;
+                        }
+                     }
+                     
+                }
+                else{
+                    if(moveOnY){
+                        
+                    }
+                        if(sensY==-1){
+                                    minY=Y0;
+                                    maxY=oldMaxY;
+                          }
+                          else{
+                                    minY=oldMinY;
+                                    maxY=Y0;
+                          }
+                         Y0=oldY;
+                         sensY*=-1;
+                         moveY(ref Y0,ref maxY,ref minY,sensY); 
+                         properDir=true;
+                    
+                   
+                }
+                break;
+                case "SAME":
+                break;
+            }
+          
+           
+            Console.WriteLine(X0+" "+Y0);
+        }
+    }
+}
