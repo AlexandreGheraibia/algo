@@ -1,0 +1,231 @@
+using System;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player
+{
+     static int oldX;
+     static int oldY;
+     static int oldMaxY;
+     static int oldMinY;
+     static int oldMaxX;
+     static int oldMinX;
+     
+      static void moveOnAxis(int sens,ref int min,ref int max,ref int val,ref int oldVal,ref int oldMinVal,ref int oldMaxVal){
+            oldVal=val;
+            oldMaxVal=max;
+            oldMinVal=min;
+            
+            if(sens==1){//RIGHT
+                min=val;
+                val=(val+max)/2;
+            }
+            else{  //LEFT
+                max=val;
+                val=(val+min)/2;
+            }
+     }
+     
+     static void moveY(ref int y,ref int max,ref int min,ref int sens,int H){
+         if((y==H-1&&sens==-1)||(y==0&&sens==1)){
+            reverseY(ref sens,ref  min,ref max,ref y, H);
+         }
+         moveOnAxis(sens,ref min,ref max,ref y,ref oldY,ref oldMinY,ref oldMaxY);
+
+     }
+     
+     static void moveX(ref int x,ref int max,ref int min,ref int sens,int W){
+          if((x==0&&sens==-1)||(x==W-1&&sens==1)){
+             reverseX(ref sens,ref  min,ref max,ref x,W);
+          }
+          moveOnAxis(sens,ref min,ref max,ref x,ref oldX,ref oldMinX,ref oldMaxX);
+          
+     }
+     
+     static void reverseX(ref int sens,ref int min,ref int max,ref int val,int W){
+         if(!((val==0&&sens==1)||(val==W-1&&sens==-1)))
+         reverseDir(ref sens,ref min,ref max,ref val,ref oldX,ref  oldMinX,ref  oldMaxX);
+         else{
+         moveX(ref val,ref max,ref min,ref sens, W);
+         Console.Error.WriteLine("ici "+val+ "min "+min+" max "+max+"");
+         }
+         
+     }
+     
+     static void reverseY(ref int sens,ref int min,ref int max,ref int val,int H){
+       if(!((val==H-1&&sens==1)||(val==0&&sens==-1)))
+         reverseDir(ref sens,ref max,ref min,ref val,ref oldY,ref  oldMinY,ref oldMaxY);
+       else
+         moveY(ref val,ref min,ref max,ref sens, H);
+     }
+     
+      static void reverseDir(ref int sens,ref int min,ref int max,ref int val,ref int oldVal,ref int oldMinVal,ref int oldMaxVal){
+           
+             sens*=-1;
+             
+         //   if(!(val==(min+max)/2)){
+                if(sens==1){
+                    min=val;
+                    max=oldMaxVal;
+                }
+                else{
+                    min=oldMinVal;
+                    max=val;
+                }
+                val=oldVal;
+           /* }
+            else{
+              min=val;
+              max=val;
+            }*/
+             
+           moveOnAxis(sens,ref min,ref max,ref val,ref oldVal,ref oldMinVal,ref oldMaxVal);
+      }
+    
+     
+     static void directionChoice(ref int x,ref int y,ref int sensX,ref int sensY,int W,int H){
+            if(x<W/2){ //émisphere gauche
+                if(y<H/2){//cadran en haut a gauche 
+                    
+                }
+                else{//cadran en bas à gauche
+                
+                }
+            }
+            else{
+                if(y>H/2){//en base à droite
+                
+                }
+                else{//en haut à droite
+                    
+                }
+            }
+     }
+   
+    
+    static void Main(string[] args)
+    {
+        string[] inputs;
+        inputs = Console.ReadLine().Split(' ');
+        int W = int.Parse(inputs[0]); // width of the building.
+        int H = int.Parse(inputs[1]); // height of the building.
+        int N = int.Parse(Console.ReadLine()); // maximum number of turns before game over.
+        inputs = Console.ReadLine().Split(' ');
+        int X0 = int.Parse(inputs[0]);
+        int Y0 = int.Parse(inputs[1]);
+        int minX=0,maxX=W;
+        int minY=H,maxY=0;
+        int sensX=1;
+        int sensY=1;
+      /*  int oldX=X0;
+        int oldY=Y0;
+        int oldMaxY=maxY;
+        int oldMinY=minY;
+        int oldMaxX=maxX;
+        int oldMinX=minX;*/ 
+        bool moveOnY=false;
+        bool axeChange=false;
+        bool properDir=true;
+       
+        // game loop
+        while (true)
+        {
+            string bombDir = Console.ReadLine(); // Current distance to the bomb compared to previous distance (COLDER, WARMER, SAME or UNKNOWN)
+             Console.Error.WriteLine("bombDir: "+bombDir);
+          
+            Console.Error.WriteLine("x: "+X0+" min: "+minX+" max: "+maxX+" sens: "+sensX);
+            Console.Error.WriteLine("y: "+Y0+" min: "+minY+" max: "+maxY+" sens: "+sensY);
+            switch(bombDir){
+                case "UNKNOWN":
+                   
+                  //X0=0;
+                  //Y0=0;
+                   moveX(ref X0,ref maxX,ref minX,ref sensX,W);
+                   moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                 
+                break;
+                
+                case "WARMER":
+                   properDir=true;
+                   if(moveOnY){
+                           moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                    }
+                   else{
+                       moveX(ref X0,ref maxX,ref minX,ref sensX,W);
+                       moveOnY=(minX==X0&&maxX==X0);
+                      if(moveOnY){//i
+                           moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                           properDir=false;
+                      }
+                   }
+                break;
+                
+                case "COLDER":
+                if(properDir){
+                    
+                    if(moveOnY){
+                        
+                        reverseY(ref sensY,ref minY,ref maxY,ref Y0,H);
+                    
+                        
+                     }
+                     else{
+                        
+                       Console.Error.WriteLine("X0: "+X0+"sensX avant: "+sensX);
+                        reverseX(ref sensX,ref minX,ref maxX,ref X0,W); 
+                       
+                        Console.Error.WriteLine("sensX après: "+sensX);
+                        moveOnY=(minX==X0&&maxX==X0);
+                        if(moveOnY){
+                          moveY(ref Y0,ref maxY,ref minY, ref sensY,H);
+                          properDir=false;
+                        }
+                     }
+                     
+                }
+                else{ Console.Error.WriteLine("ici properfalse");
+                   if(!moveOnY){
+                        reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
+                        Console.Error.WriteLine("sensX après: "+sensX);
+                        moveOnY=(minX==X0&&maxX==X0);
+                        if(moveOnY){
+                          moveY(ref Y0,ref maxY,ref minY, ref sensY,H);
+                          properDir=false;
+                        }
+                        
+                   }
+                   else{
+                       reverseY(ref sensY,ref minY,ref maxY,ref Y0,H);
+                       properDir=true;
+                  }
+                   
+                }
+                break;
+                case "SAME":
+                if(!moveOnY){
+                     reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
+                     moveOnY=(minX==X0&&maxX==X0);
+                     if(moveOnY){
+                        moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                        properDir=false;
+                     }
+                }
+                else{
+                 moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                }
+                  
+                break;
+            }
+          
+           
+            Console.WriteLine(X0+" "+Y0);
+        }
+    }
+}
