@@ -17,8 +17,7 @@ class Player
      static int oldMinY;
      static int oldMaxX;
      static int oldMinX;
-     
-      static void moveOnAxis(int sens,ref int min,ref int max,ref int val,ref int oldVal,ref int oldMinVal,ref int oldMaxVal){
+     static void moveOnAxis(int sens,ref int min,ref int max,ref int val,ref int oldVal,ref int oldMinVal,ref int oldMaxVal){
             oldVal=val;
             oldMaxVal=max;
             oldMinVal=min;
@@ -34,17 +33,13 @@ class Player
      }
      
      static void moveY(ref int y,ref int max,ref int min,ref int sens,int H){
-         if((y==H-1&&sens==-1)||(y==0&&sens==1)){
-            reverseY(ref sens,ref  min,ref max,ref y, H);
-         }
+        
          moveOnAxis(sens,ref min,ref max,ref y,ref oldY,ref oldMinY,ref oldMaxY);
 
      }
      
      static void moveX(ref int x,ref int max,ref int min,ref int sens,int W){
-          if((x==0&&sens==-1)||(x==W-1&&sens==1)){
-             reverseX(ref sens,ref  min,ref max,ref x,W);
-          }
+         
           moveOnAxis(sens,ref min,ref max,ref x,ref oldX,ref oldMinX,ref oldMaxX);
           
      }
@@ -52,8 +47,8 @@ class Player
      static void reverseX(ref int sens,ref int min,ref int max,ref int val,int W){
          if(!((val==0&&sens==1)||(val==W-1&&sens==-1)))
          reverseDir(ref sens,ref min,ref max,ref val,ref oldX,ref  oldMinX,ref  oldMaxX);
-         else{
-         moveX(ref val,ref max,ref min,ref sens, W);
+        else{
+           moveX(ref val,ref min,ref max,ref sens, W);
          Console.Error.WriteLine("ici "+val+ "min "+min+" max "+max+"");
          }
          
@@ -61,16 +56,14 @@ class Player
      
      static void reverseY(ref int sens,ref int min,ref int max,ref int val,int H){
        if(!((val==H-1&&sens==1)||(val==0&&sens==-1)))
-         reverseDir(ref sens,ref max,ref min,ref val,ref oldY,ref  oldMinY,ref oldMaxY);
+         reverseDir(ref sens,ref min,ref max,ref val,ref oldY,ref  oldMinY,ref oldMaxY);
        else
-         moveY(ref val,ref min,ref max,ref sens, H);
+        moveY(ref val,ref min,ref max,ref sens, H);
      }
      
       static void reverseDir(ref int sens,ref int min,ref int max,ref int val,ref int oldVal,ref int oldMinVal,ref int oldMaxVal){
            
              sens*=-1;
-             
-         //   if(!(val==(min+max)/2)){
                 if(sens==1){
                     min=val;
                     max=oldMaxVal;
@@ -80,36 +73,43 @@ class Player
                     max=val;
                 }
                 val=oldVal;
-           /* }
-            else{
-              min=val;
-              max=val;
-            }*/
-             
-           moveOnAxis(sens,ref min,ref max,ref val,ref oldVal,ref oldMinVal,ref oldMaxVal);
-      }
-    
-     
-     static void directionChoice(ref int x,ref int y,ref int sensX,ref int sensY,int W,int H){
-            if(x<W/2){ //émisphere gauche
-                if(y<H/2){//cadran en haut a gauche 
-                    
-                }
-                else{//cadran en bas à gauche
-                
-                }
+          
+          moveOnAxis(sens,ref min,ref max,ref val,ref oldVal,ref oldMinVal,ref oldMaxVal);
+}
+     static void moveX(ref int x,ref int max,ref int min,int sens){
+            oldX=x;
+            oldMaxX=max;
+            oldMinX=min;
+            
+            if(sens==1){//RIGHT
+                min=x;
+                x=(x+max)/2;
             }
-            else{
-                if(y>H/2){//en base à droite
-                
-                }
-                else{//en haut à droite
-                    
-                }
+            else{  //LEFT
+                max=x;
+                x=(x+min)/2;
             }
      }
-   
     
+     static void moveY(ref int y,ref int max,ref int min,int sens){
+            oldY=y;
+            oldMaxY=max;
+            oldMinY=min;
+            if(sens==1){//UP
+              
+                y=(y+max)/2;
+                min=y;
+            }
+            else{//DOWN
+                y=(y+min)/2;
+                max=y;
+            }
+     }
+     static void moveToMiddle(ref int x,ref int y, int w, int h){
+        x=w/2;
+        y=h/2;
+        
+    }
     static void Main(string[] args)
     {
         string[] inputs;
@@ -124,44 +124,77 @@ class Player
         int minY=H,maxY=0;
         int sensX=1;
         int sensY=1;
-      /*  int oldX=X0;
-        int oldY=Y0;
-        int oldMaxY=maxY;
-        int oldMinY=minY;
-        int oldMaxX=maxX;
-        int oldMinX=minX;*/ 
         bool moveOnY=false;
         bool axeChange=false;
-        bool properDir=true;
+        bool properDir=false;
        
         // game loop
         while (true)
         {
             string bombDir = Console.ReadLine(); // Current distance to the bomb compared to previous distance (COLDER, WARMER, SAME or UNKNOWN)
-             Console.Error.WriteLine("bombDir: "+bombDir);
-          
-            Console.Error.WriteLine("x: "+X0+" min: "+minX+" max: "+maxX+" sens: "+sensX);
-            Console.Error.WriteLine("y: "+Y0+" min: "+minY+" max: "+maxY+" sens: "+sensY);
+            Console.Error.WriteLine("x:"+X0+" min: "+minX+" max: "+maxX+" sens "+ sensX);
+            Console.Error.WriteLine("Y:"+Y0+" min: "+minY+" max: "+maxY+" sens "+ sensY);
+            Console.Error.WriteLine("bombDir:"+bombDir);
             switch(bombDir){
                 case "UNKNOWN":
+                  if(X0<W/2){
+                     //X0=W-1;
+                     sensX=1;
+                   }
+                   else{
+                      
+                       sensX=-1;
+                   }
+                   if(Y0>H/2){
+                    sensY=1;
+                    
+                    }
+                    else{
                    
-                  //X0=0;
-                  //Y0=0;
-                   moveX(ref X0,ref maxX,ref minX,ref sensX,W);
-                   moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                    sensY=-1;
+                    
+                    }
                  
+                  if(W!=1){
+                  moveX(ref X0,ref maxX,ref minX,sensX);
+                
+                  }
+                  else{
+                       
+                    if(sensY==-1) {
+                     sensY*=-1;
+                     Y0=0;
+                    }
+                      
+                      moveOnY=true;
+                  }
+                  if(H!=1){
+                      
+                 
+                 
+                    
+                  moveY(ref Y0,ref maxY,ref minY,sensY);
+                   
+                  }
+                  
+                  Console.Error.WriteLine("Y:"+Y0+" min: "+minY+" max: "+maxY+" sens "+ sensY);
+                 
+                 minY=H;maxY=0;
+                  minX=0;maxX=W;
                 break;
                 
                 case "WARMER":
+                
                    properDir=true;
                    if(moveOnY){
-                           moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                       Console.Error.WriteLine("Y:"+Y0+" min: "+minY+" max: "+maxY+" sens "+ sensY);
+                           moveY(ref Y0,ref maxY,ref minY,sensY);
                     }
                    else{
-                       moveX(ref X0,ref maxX,ref minX,ref sensX,W);
+                       moveX(ref X0,ref maxX,ref minX,sensX);
                        moveOnY=(minX==X0&&maxX==X0);
-                      if(moveOnY){//i
-                           moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
+                      if(moveOnY){
+                           moveY(ref Y0,ref maxY,ref minY,sensY);
                            properDir=false;
                       }
                    }
@@ -171,56 +204,45 @@ class Player
                 if(properDir){
                     
                     if(moveOnY){
-                        
-                        reverseY(ref sensY,ref minY,ref maxY,ref Y0,H);
-                    
+                          reverseY(ref sensY,ref minY,ref maxY,ref Y0, H);
+                         // moveY(ref Y0,ref maxY,ref minY,sensY);
                         
                      }
                      else{
-                        
-                       Console.Error.WriteLine("X0: "+X0+"sensX avant: "+sensX);
-                        reverseX(ref sensX,ref minX,ref maxX,ref X0,W); 
-                       
-                        Console.Error.WriteLine("sensX après: "+sensX);
+                       reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
+                       // moveX(ref X0,ref maxX,ref minX,sensX);
                         moveOnY=(minX==X0&&maxX==X0);
                         if(moveOnY){
-                          moveY(ref Y0,ref maxY,ref minY, ref sensY,H);
+                          moveY(ref Y0,ref maxY,ref minY,sensY);
                           properDir=false;
                         }
                      }
                      
                 }
-                else{ Console.Error.WriteLine("ici properfalse");
-                   if(!moveOnY){
-                        reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
-                        Console.Error.WriteLine("sensX après: "+sensX);
-                        moveOnY=(minX==X0&&maxX==X0);
-                        if(moveOnY){
-                          moveY(ref Y0,ref maxY,ref minY, ref sensY,H);
-                          properDir=false;
-                        }
+                else{
+                    if(moveOnY){
                         
-                   }
-                   else{
-                       reverseY(ref sensY,ref minY,ref maxY,ref Y0,H);
-                       properDir=true;
-                  }
+                    }
+                        reverseY(ref sensY,ref minY,ref maxY,ref Y0, H);
+                         properDir=true;
+                    
                    
                 }
                 break;
                 case "SAME":
-                if(!moveOnY){
-                     reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
-                     moveOnY=(minX==X0&&maxX==X0);
-                     if(moveOnY){
-                        moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
-                        properDir=false;
-                     }
+                if(!moveOnY)//reverse si on est a égal distance après un warm
+                {      reverseX(ref sensX,ref minX,ref maxX,ref X0,W);
+                      // moveX(ref X0,ref maxX,ref minX,sensX);
+                       moveOnY=(minX==X0&&maxX==X0);
+                       if(moveOnY){
+                       moveY(ref Y0,ref maxY,ref minY,sensY);
+                       properDir=false;
+                       }
+                }else{
+                    
+                    
+                
                 }
-                else{
-                 moveY(ref Y0,ref maxY,ref minY,ref sensY,H);
-                }
-                  
                 break;
             }
           
