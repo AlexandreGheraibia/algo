@@ -18,41 +18,165 @@ class Player
      static int oldMaxX;
      static int oldMinX;
      
-     static void moveX(ref int x,ref int max,ref int min,int sens){
-            oldX=x;
-            oldMaxX=max;
-            oldMinX=min;
-            ;
-            if(sens==1){//RIGHT
-                min=x;
-                x=(x+max+1)/2;
-            }
-            else{  //LEFT
-                max=x;
-                x=(x+min+1)/2;
-            }
-     }
-    
-     static void moveY(ref int y,ref int max,ref int min,int sens){
+    public struct Point{
+       public int dirX {get;set;}
+       public int dirY {get;set;}
+       public int x {get;set;}
+       public int y {get;set;}
+       public int maxX {get;set;}
+       public int minX {get;set;}
+       public int minY {get;set;}
+       public int maxY {get;set;}
+       public int oldX {get;set;}
+       public int oldMaxX{get;set;}
+       public int oldMinX{get;set;}
+       public int oldY {get;set;}
+       public int oldMaxY{get;set;}
+       public int oldMinY{get;set;}
+       public int W {get;}
+       public int H {get;}
+        
+        public Point(int x,int y,int W,int H){
+            this.x=x;
+            this.y=y;
+            this.maxY=0;
+            this.maxX=W;
+            this.minX=0;
+            this.minY=H;
+            this.oldX=x;
+            this.oldY=y;
+            this.oldMaxX=W;
+            this.oldMinX=0;
+            this.oldMaxY=0;
+            this.oldMinY=H;
+            this.W=W;
+            this.H=H;
+            this.dirY=1;
+            this.dirX=1;
+        }
+        
+        public void moveY(){
             oldY=y;
-            oldMaxY=max;
-            oldMinY=min;
-            if(sens==1){//UP
-              
-                y=(y+max)/2;
-                min=oldY;
+            oldMaxY=maxY;
+            oldMinY=minY;
+            
+             if(dirY==1){//UP
+                if(y!=0){
+                    minY=y-1;
+                    y=(y+maxY)/2;
+                }
+                else
+                    minY=y;
             }
             else{//DOWN
-                y=(y+min)/2;
+                if(y!=H-1){
+                    maxY=y;
+                    y=(y+minY)/2;
+                }
+                else
+                    maxY=y;
+            }
+        }
+         
+       
+     
+        public void moveX(){
+            oldX=x;
+            oldMaxX=maxX;
+            oldMinX=minX;
+            
+            if(dirX==1){//RIGHT
+                if(x!=W-1){
+                    minX=x;
+                    x=(x+maxX+1)/2;
+                }
+                else
+                    minX=x;
+            }
+            else{//LEFT
+                if(x!=0){
+                    maxX=x;
+                    x=(x+minX-1)/2;
+                }
+                else
+                    maxX=x;
+            }
+        }   
+        
+            
+
+         public void reverseY(){
+        if(!((y==H-1&&dirY==1)||(y==0&&dirY==-1))){
+            dirY*=-1;
+            if(dirY==1){
                
-                max=oldY;
+                maxY=oldMaxY;
+                minY=oldMinY;
+                y=oldY+1;
+            }
+            else{
+                minY=oldMinY;
+                maxY=oldMaxY;
+                y=oldY;
+               Console.Error.WriteLine("oldmin: "+oldY);
+            }
+           
+            
+           }
+         
+           moveY();
+         }
+         
+      public void reverseX(){
+        if(!((x==0&&dirX==1)||(x==W-1&&dirX==-1))){
+                dirX*=-1;
+                if(dirX==1){
+                    //x=oldX;
+                    maxX=oldMaxX;
+                }
+                else{
+                   // x=oldX;
+                    minX=oldMinX;
+                   
+                   
+                }
+                
+            }
+         
+          moveX();
+         
+        
+        }
+        
+        public bool isMoveOnY(){
+            if(W!=1){
+                if(dirX==-1&&0==x)
+                    return true;
+                else if(dirX==1&&x==W-1)
+                        return true;
+                    else
+                        return minX==x&&x==maxX;
+                    
+                
+            }
+            else
+                return true;
+        }
+        
+        public bool isOnBoundaries(){
+            return (this.dirX==-1&&this.x>0)||(this.dirX==1&&this.x<W-1);
+        }
+        
+        public override string ToString(){
+               return "min: "+this.minX+" x:"+this.x+" max: "+this.maxX+" sens "+ this.dirX+
+                      "\nmin: "+this.minY+" Y:"+this.y+" max: "+this.maxY+" sens "+ this.dirY;
+        
             }
      }
-     static void moveToMiddle(ref int x,ref int y, int w, int h){
-        x=w/2;
-        y=h/2;
-        
-    }
+   
+     
+     
+  
     static void Main(string[] args)
     {
         string[] inputs;
@@ -63,98 +187,130 @@ class Player
         inputs = Console.ReadLine().Split(' ');
         int X0 = int.Parse(inputs[0]);
         int Y0 = int.Parse(inputs[1]);
-        int minX=0,maxX=W-1;
-        int minY=H,maxY=0;
-        int sensX=1;
-        int sensY=1;
-        bool moveOnY=true;
+        bool moveOnY=false;
         bool axeChange=false;
-        bool properDir=true;
-       
+        bool properDir=false;
+        Point batMan=new Point(X0,Y0,W,H);
         // game loop
         while (true)
         {
             string bombDir = Console.ReadLine(); // Current distance to the bomb compared to previous distance (COLDER, WARMER, SAME or UNKNOWN)
-           // Console.Error.WriteLine(X0+" "+minX+" "+maxX);
-            switch(bombDir){
+            Console.Error.WriteLine("bombDir:"+bombDir);
+            Console.Error.WriteLine("before:\n"+batMan);
+           switch(bombDir){
                 case "UNKNOWN":
+                    
+                  if(batMan.x<W/2) {
+                        batMan.dirX=1;
+                        
+                  }
+                  else {
+                         batMan.dirX=-1;
+                  }
+                   
+                  if(batMan.y>H/2){
+                      
+                      batMan.dirY=1;
+                      
+                  }
+                  else{ batMan.dirY=-1;
+                     
+                  }
                  
-                   moveX(ref X0,ref maxX,ref minX,sensX);
-                   moveY(ref Y0,ref maxY,ref minY,sensY);
-                 
+                  if(W>1){
+                     // batMan.moveX();
+                      batMan.x=W/2;
+                      batMan.y=H/2;
+                      }
+                  else{
+                     //batMan.moveY();
+                    batMan.y=H/2;
+                    moveOnY=true;
+                  }
+                  
+                
+                oldMaxX=W;
+                oldMinX=0;
+                oldMaxY=0;
+                oldMinY=H;
+                batMan.minY=H;batMan.maxY=0;
+                batMan.minX=0;batMan.maxX=W;
+               
                 break;
                 
                 case "WARMER":
+                   moveOnY=batMan.isMoveOnY(); 
                    properDir=true;
                    if(moveOnY){
-                           moveY(ref Y0,ref maxY,ref minY,sensY);
+                        batMan.moveY();
                     }
                    else{
-                       moveX(ref X0,ref maxX,ref minX,sensX);
-                       moveOnY=(minX==X0&&maxX==X0);
-                      if(moveOnY){
-                           moveY(ref Y0,ref maxY,ref minY,sensY);
-                           properDir=false;
+                      batMan.moveX();
+                     
+                      if(batMan.isMoveOnY()&&batMan.isOnBoundaries()){
+                        moveOnY=batMan.isMoveOnY(); 
+                        batMan.moveY();
+                        properDir=false;
                       }
                    }
                 break;
                 
                 case "COLDER":
+              
                 if(properDir){
-                    
+                    Console.Error.WriteLine(batMan);
                     if(moveOnY){
-                       sensY*=-1;
-                        {    if(sensY==1){
-                                minY=Y0;
-                                maxY=oldMaxY;
-                             }
-                             else{
-                                minY=oldMinY;
-                                maxY=Y0;
-                             }
-                           Y0=oldY; 
-                          moveY(ref Y0,ref maxY,ref minY,sensY);
-                           
-                        }
                         
+                     
+                            batMan.reverseY();
+                    
+                       
+                         // moveY(ref Y0,ref maxY,ref minY,sensY);  
                      }
                      else{
-                        sensX=-1*sensX;   
-                        moveX(ref X0,ref maxX,ref minX,sensX);
-                        moveOnY=(minX==X0&&maxX==X0);
+                      
+                         batMan.reverseX();
+                      // moveX(ref X0,ref maxX,ref minX,sensX);
+                        moveOnY=batMan.isMoveOnY();
                         if(moveOnY){
-                          moveY(ref Y0,ref maxY,ref minY,sensY);
+                        
+                          batMan.moveY();
                           properDir=false;
                         }
                      }
                      
                 }
                 else{
-                    if(moveOnY){
-                        
+                    if(!moveOnY){
+                         batMan.reverseX();
                     }
-                        if(sensY==-1){
-                                    minY=Y0;
-                                    maxY=oldMaxY;
-                          }
-                          else{
-                                    minY=oldMinY;
-                                    maxY=Y0;
-                          }
-                         Y0=oldY;
-                         sensY*=-1;
-                         moveY(ref Y0,ref maxY,ref minY,sensY); 
-                         properDir=true;
-                    
-                   
+                    else
+                         batMan.reverseY();
+                    properDir=true;
                 }
                 break;
                 case "SAME":
+                moveOnY=batMan.isMoveOnY();
+                if(!moveOnY){//reverse si on est a égal distance après un warm
+                   batMan.reverseX();
+                      // moveX(ref X0,ref maxX,ref minX,sensX);
+                   moveOnY=batMan.isMoveOnY();
+                   if(moveOnY){
+                     batMan.moveY();
+                     properDir=false;
+                   }
+                }else{
+                   
+                     batMan.reverseY();
+                }
+                
                 break;
+                
             }
-          
-           
-            Console.WriteLine(X0+" "+Y0);
+            Console.Error.WriteLine("after:\n"+batMan);
+             
+            Console.WriteLine(batMan.x+" "+batMan.y);
         }
+        
     }
 }
