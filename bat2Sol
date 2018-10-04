@@ -1,0 +1,314 @@
+using System;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Player
+{
+     static int oldX;
+     static int oldY;
+     static int oldMaxY;
+     static int oldMinY;
+     static int oldMaxX;
+     static int oldMinX;
+     
+    public struct Point{
+       public int dirX {get;set;}
+       public int dirY {get;set;}
+       public int x {get;set;}
+       public int y {get;set;}
+       public int maxX {get;set;}
+       public int minX {get;set;}
+       public int minY {get;set;}
+       public int maxY {get;set;}
+       public int oldX {get;set;}
+       public int oldMaxX{get;set;}
+       public int oldMinX{get;set;}
+       public int oldY {get;set;}
+       public int oldMaxY{get;set;}
+       public int oldMinY{get;set;}
+       public int W {get;}
+       public int H {get;}
+       public bool canRev{get;set;}
+       public Point(int x,int y,int W,int H){
+            this.x=x;
+            this.y=y;
+            this.maxY=0;
+            this.maxX=W;
+            this.minX=0;
+            this.minY=H;
+            this.oldX=x;
+            this.oldY=y;
+            this.oldMaxX=W;
+            this.oldMinX=0;
+            this.oldMaxY=0;
+            this.oldMinY=H;
+            this.W=W;
+            this.H=H;
+            this.dirY=1;
+            this.dirX=1;
+            this.canRev=false;
+        }
+        
+      
+       public void move(bool moveOnY){
+            if(!moveOnY){
+                oldX=x;
+                x=(minX+maxX)/2;
+            }
+            else{
+                oldY=y;
+                y=(minY+maxY)/2;       
+            }
+       }
+     
+       public void moveBoundsX(){
+            if(dirX==1){
+               oldMinX=minX;
+               minX=x+1;
+            }
+            else{
+               oldMaxX=maxX;
+               maxX=x-1;
+            }
+        }   
+        
+        public void sameX(){
+            if(dirX==-1){//ou faire minX--
+                minX=oldMinX;
+            }
+            else{//ou faire max++
+                maxX=oldMaxX;
+            }
+            dirX*=-1;
+            moveBoundsX();
+            dirX*=-1;
+        }
+        
+        public void sameY(){
+            if(dirY==-1){
+                minY=oldMinY;       
+            }
+            else{
+                maxY=oldMaxY;
+            }
+            dirY*=-1;
+            moveBoundsY();
+            dirY*=-1;
+        }
+        
+         public void comeBackY(){
+            dirY*=-1;
+            if(dirY==-1){
+                minY=(oldMinY+oldY)/2;
+               // maxY=y-1;
+            }
+            else{
+               // minY=y+1;
+                maxY=(oldMaxY+oldY)/2;
+            }
+            moveBoundsY();
+        }
+        
+         public void comeBackX(){
+             dirX*=-1;
+            if(dirX==-1){
+                minX=(oldMinX+oldX)/2;
+                maxX=x-1;
+            }
+            else{
+                minX=x+1;
+                maxX=(oldMaxX+oldX)/2;
+            }
+             if(dirX==1){
+                oldMinX=minX;
+                minX=x+1;
+            }
+            else{
+                oldMaxX=maxX;
+               maxX=x-1;
+            }
+        }
+        
+        public void moveBoundsY(){
+            if(dirY==1){
+                 oldMinY=minY;
+                 minY=y-1;
+            }
+            else{
+                oldMaxY=maxY;
+                maxY=y+1;
+            }
+        }
+            
+        public void whichDir(){
+            int middleX,middleY;
+            middleX=(maxX+minX)/2;
+            middleY=(maxY+minY)/2;
+            if(x>W/2){
+                maxX=W/2;
+                dirX=-1;
+            }
+            else{
+                minX=W-3;
+                dirX=1;
+            }
+            if(y<middleY){
+                dirY=-1;
+            }
+            else{
+                dirY=1;
+            }
+        }
+        
+        public bool isMoveOnY(){
+            return (isLeftBounds()||isRightBounds())||((!(nextIsLeftBounds()||nextIsRightBounds()))&&(minX>=maxX))||W==1;
+        }
+        
+        public bool isUpBounds(){
+            return dirY==1&&y==0&&minY==0;
+        }
+        
+        public bool isDownBounds(){
+            return dirY==-1&&y==H-1&&minY==H;
+        }
+        
+        public bool nextIsLeftBounds(){
+            if(dirX==-1&&x==1&&minX==0){
+                canRev=true&&W>1;
+            }
+            return dirX==-1&&x==1&&minX==0;
+        }
+        
+        public bool isLeftBounds(){
+            return dirX==-1&&x==0&&minX==0;
+        }
+        
+        public bool nextIsRightBounds(){
+            if(dirX==1&&(x==W-2||x==W-3)&&maxX==W){
+                canRev=true&&W>1;
+            }
+            return dirX==1&&(x==W-2||x==W-3)&&maxX==W; 
+        }
+        
+        public bool isRightBounds(){
+            return dirX==1&&x==W-1&&maxX==W; 
+        }
+        
+        public override string ToString(){
+               return "min: "+this.minX+" x:"+this.x+" max: "+this.maxX+" sens "+ this.dirX+
+                      "\nmin: "+this.minY+" Y:"+this.y+" max: "+this.maxY+" sens "+ this.dirY;
+        
+            }
+       }
+   
+   static void Main(string[] args)
+    {
+        string[] inputs;
+        inputs = Console.ReadLine().Split(' ');
+        int W = int.Parse(inputs[0]); // width of the building.
+        int H = int.Parse(inputs[1]); // height of the building.
+        int N = int.Parse(Console.ReadLine()); // maximum number of turns before game over.
+        inputs = Console.ReadLine().Split(' ');
+        int X0 = int.Parse(inputs[0]);
+        int Y0 = int.Parse(inputs[1]);
+        bool moveOnY=false;
+        bool properDir=false;
+        bool firstReverseX=true;
+        bool firstReverseY=true;
+        int count=0;
+        Point batMan=new Point(X0,Y0,W,H);
+        // game loop
+        while (true)
+        {
+            string bombDir = Console.ReadLine(); // Current distance to the bomb compared to previous distance (COLDER, WARMER, SAME or UNKNOWN)
+            Console.Error.WriteLine("bombDir:"+bombDir);
+            Console.Error.WriteLine("before:\n"+batMan);
+            
+           switch(bombDir){
+                case "UNKNOWN":
+                  batMan.whichDir();
+                  properDir=true;
+                  if(W==1){ 
+                    moveOnY=true;
+                  }
+                break;
+                
+                case "WARMER":
+                    if(count>1){
+                        properDir=false;
+                    }
+                    batMan.canRev=false;
+                    moveOnY=batMan.isMoveOnY();
+                    if(!moveOnY){
+                       batMan.moveBoundsX();
+                      
+                    }
+                    else{
+                        batMan.moveBoundsY();
+                        if(W!=1)
+                         properDir=true;
+                    }
+                break;
+        
+                case "COLDER":
+                    if((!moveOnY)||(batMan.canRev)){
+                       batMan.comeBackX();
+                        if(properDir){
+                            if(firstReverseX){
+                                if(batMan.dirX==-1){
+                                  batMan.minX=0;  
+                                }
+                                else{
+                                  batMan.maxX=W;
+                                }
+                                firstReverseX=false;
+                            }
+                        }
+                        properDir=false;
+                   }
+                   else{
+                         batMan.comeBackY();
+                         if(properDir&&W!=1){
+                           if(firstReverseY){
+                              if(batMan.dirY==1){
+                                  batMan.maxY=0;
+                              }
+                              else{
+                                  batMan.minY=H;  
+                              }
+                              firstReverseY=false;
+                           }
+                           properDir=false;
+                        }
+                  }
+                break;
+                
+                case "SAME":
+                batMan.canRev=false;
+                moveOnY=batMan.isMoveOnY();
+                 if(!moveOnY){
+                    batMan.sameX();
+                 }
+                 else{
+                    batMan.sameY();
+                }
+                break;
+                
+            }
+            batMan.move(moveOnY);
+            if(properDir)
+                count++;
+            Console.Error.WriteLine("after:\n"+batMan);
+            Console.WriteLine(batMan.x+" "+batMan.y);
+          
+        }
+        
+    }
+}
