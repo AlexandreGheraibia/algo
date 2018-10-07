@@ -1,0 +1,162 @@
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+ //reolution des systèmes linéaires méthode de gauss
+// http://maths.cnam.fr/IMG/pdf/Alg.3_resolution_des_systemes_lineaires.pdf
+
+var featureMap={
+        "Rabbits":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":0,
+            "Heads":1,
+            "Wings":0
+            },
+        "Chickens":{
+            "Eyes":2,
+            "Legs":2,
+            "Horns":0,
+            "Heads":1,
+            "Wings":2
+            },
+        "Cows":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":2,
+            "Heads":1,
+            "Wings":0
+            },
+        "Pegasi":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":0,
+            "Heads":1,
+            "Wings":2
+            },
+        "Demons":{
+            "Eyes":4,
+            "Legs":4,
+            "Horns":4,
+            "Heads":1,
+            "Wings":2
+            }
+    };
+
+
+function affiche(A,N){
+var line="";
+    for(var k=0;k<N;k++){
+        line="";
+        for(var z=0;z<N;z++){
+           line+=A[k][z]+(z!==N-1?" ":""); 
+        }
+        printErr(line);
+    }
+}
+
+
+var N = parseInt(readline());
+var inputs = readline().split(' ');
+var speciesTab=[];
+var features={};
+var speciesOrder={};
+for (var i = 0; i < N; i++) {
+    var species = inputs[i];
+    printErr(speciesTab[i]=species);
+    speciesOrder[species]=i;
+}
+
+for (var i = 0; i < N; i++) {
+    var inputs = readline().split(' ');
+    var thing = inputs[0];
+    var number = parseInt(inputs[1]);
+    features[thing]=number;
+    
+}
+
+for(var f in features){
+    printErr(f+":"+features[f]);
+}
+
+
+var A=new Array(N);
+var Y=new Array(N);
+var X=new Array(N);
+var i=0;
+
+ for(var f in features){//pour chaque caracteristique donnée
+            //pour chaque espèce
+        A[i]=new Array(N);
+        for(var k=0;k<N;k++){
+                
+                A[i][k]=featureMap[speciesTab[k]][f];
+                          
+        }
+                Y[i]=features[f];      
+      
+     i++;
+ }
+
+affiche(A,N);
+
+for(var indPivot=0;indPivot<N;indPivot++)
+{
+    i=indPivot;
+    //recherche première ligne avec un pivot
+    var maxInd=indPivot;
+    while(i<N/*&&A[i][indPivot]===0*/){
+       if(A[i][indPivot]>A[maxInd][indPivot]){
+            maxInd=i;
+        }
+        i++;
+    }
+    //maxInd=i;
+    if(maxInd!==indPivot){
+        for(var k=0;k<N;k++){
+            var tmp=A[indPivot][k];
+            A[indPivot][k]=A[maxInd][k];
+            A[maxInd][k]=tmp;
+        }
+        
+        
+        tmp=Y[maxInd];
+        Y[maxInd]=Y[indPivot];
+        Y[indPivot]=tmp;
+    }
+    
+    for(i=indPivot+1;i<N;i++){
+        var divBy=A[indPivot][indPivot];
+        if(divBy!==0){
+            divBy=A[i][indPivot]/A[indPivot][indPivot];
+        }
+        if(divBy!==0){
+            for(var k=0;k<N;k++){
+                A[i][k]=A[i][k]-divBy*A[indPivot][k];
+               
+            }
+             Y[i]=Y[i]-divBy*Y[indPivot];
+        }
+    }
+}
+
+for(var k=N-1;k>=0;k--){
+    for(var v=N-1;v>=k;v--){
+            X[k]=Y[k];
+            for(var l=v+1;l<N;l++){
+                X[k]-=A[k][l]*X[l];
+            }
+            if(A[k][v]!==0){
+             printErr("X "+X[k]+" A "+A[k][v]);
+             X[k]=X[k]/A[k][v];
+            }
+        }
+}
+
+printErr("\n");
+affiche(A,N);
+for(var k=0;k<N;k++){
+    print(speciesTab[k]+" "+X[speciesOrder[speciesTab[k]]]);
+}
+// Write an action using print()
+// To debug: printErr('Debug messages...');
