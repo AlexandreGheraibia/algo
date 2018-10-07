@@ -53,6 +53,7 @@ var line="";
         }
         printErr(line);
     }
+    printErr("\n");
 }
 
 
@@ -60,11 +61,14 @@ var N = parseInt(readline());
 var inputs = readline().split(' ');
 var speciesTab=[];
 var features={};
-var speciesOrder={};
+var A=new Array(N);
+var Y=new Array(N);
+var X=new Array(N);
+var i;
+
 for (var i = 0; i < N; i++) {
     var species = inputs[i];
-    printErr(speciesTab[i]=species);
-    speciesOrder[species]=i;
+    speciesTab[i]=species;
 }
 
 for (var i = 0; i < N; i++) {
@@ -72,29 +76,17 @@ for (var i = 0; i < N; i++) {
     var thing = inputs[0];
     var number = parseInt(inputs[1]);
     features[thing]=number;
-    
-}
-
-for(var f in features){
-    printErr(f+":"+features[f]);
 }
 
 
-var A=new Array(N);
-var Y=new Array(N);
-var X=new Array(N);
-var i=0;
-
+i=0;
  for(var f in features){//pour chaque caracteristique donnée
             //pour chaque espèce
         A[i]=new Array(N);
         for(var k=0;k<N;k++){
-                
                 A[i][k]=featureMap[speciesTab[k]][f];
-                          
         }
-                Y[i]=features[f];      
-      
+         Y[i]=features[f];            
      i++;
  }
 
@@ -111,7 +103,7 @@ for(var indPivot=0;indPivot<N;indPivot++)
         }
         i++;
     }
-    //maxInd=i;
+
     if(maxInd!==indPivot){
         for(var k=0;k<N;k++){
             var tmp=A[indPivot][k];
@@ -147,16 +139,14 @@ for(var k=N-1;k>=0;k--){
                 X[k]-=A[k][l]*X[l];
             }
             if(A[k][v]!==0){
-             printErr("X "+X[k]+" A "+A[k][v]);
              X[k]=X[k]/A[k][v];
             }
         }
 }
 
-printErr("\n");
 affiche(A,N);
 for(var k=0;k<N;k++){
-    print(speciesTab[k]+" "+X[speciesOrder[speciesTab[k]]]);
+    print(speciesTab[k]+" "+X[k]);
 }
 // Write an action using print()
 // To debug: printErr('Debug messages...');
