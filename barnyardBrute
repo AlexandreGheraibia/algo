@@ -1,0 +1,116 @@
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+ //resolution en brute force 
+ //essayer par résolution de systeme linéaire
+ //http://maths.cnam.fr/IMG/pdf/Alg.3_resolution_des_systemes_lineaires.pdf
+var featureMap={
+        "Rabbits":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":0,
+            "Heads":1,
+            "Wings":0
+            },
+        "Chickens":{
+            "Eyes":2,
+            "Legs":2,
+            "Horns":0,
+            "Heads":1,
+            "Wings":2
+            },
+        "Cows":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":2,
+            "Heads":1,
+            "Wings":0
+            },
+        "Pegasi":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":0,
+            "Heads":1,
+            "Wings":2
+            },
+        "Demons":{
+            "Eyes":2,
+            "Legs":4,
+            "Horns":4,
+            "Heads":1,
+            "Wings":2
+            }
+    };
+
+function nbAnimals(n){
+    var nb=0;
+    for(var f in features){
+        switch(f){
+            case "Heads":
+                    nb+=features[f];         
+                break;
+            default:
+                    nb+=features[f]/2;         
+                break;
+        
+        }
+    }
+    return nb/n;
+}
+
+
+var N = parseInt(readline());
+var inputs = readline().split(' ');
+var speciesTab=[];
+var features={};
+for (var i = 0; i < N; i++) {
+    var species = inputs[i];
+    speciesTab[i]=species;
+}
+
+for (var i = 0; i < N; i++) {
+    var inputs = readline().split(' ');
+    var thing = inputs[0];
+    var number = parseInt(inputs[1]);
+    features[thing]=number;
+}
+
+var nbMax=nbAnimals(N);
+var counter=[];
+for(var i=0;i<N;i++){
+    counter[i]=1;
+}
+    var i=0;
+    var trouver=false;
+    while(counter[N-1]<nbMax&&!trouver){
+        trouver=true;
+        for(var f in features){//pour chaque caracteristique donnée
+            //pour chaque espèce
+             var sumBySpecies=0;
+             for(var k=0;k<N;k++){
+                // printErr("espece: "+speciesTab[k]);
+                sumBySpecies+=featureMap[speciesTab[k]][f]*counter[k];
+            }
+            trouver&=(sumBySpecies==features[f]);
+        }
+        
+        if(!trouver){
+               if(counter[i]<nbMax){
+                    counter[i]++;
+                    for(var j=0;j<i;j++){
+                        counter[j]=1;
+                    }
+                    i=0;
+                }
+                else{
+                    i++;
+                }
+            }
+    }
+    
+     for(var k=0;k<N;k++){
+         print(speciesTab[k]+" "+counter[k]);
+     }
+// Write an action using print()
+// To debug: printErr('Debug messages...');
