@@ -2,7 +2,7 @@
  * Auto-generated code below aims at helping you parse
  * the standard input according to the problem statement.
  **/
- //reolution des systèmes linéaires méthode de gauss
+ //resolution des systèmes linéaires méthode de gauss
 // http://maths.cnam.fr/IMG/pdf/Alg.3_resolution_des_systemes_lineaires.pdf
 
 var featureMap={
