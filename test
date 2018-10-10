@@ -29,7 +29,6 @@ public class MgmInterviewFoodSort {
 
 		for (int i = 0; i < foodArray.length-1; i++) {
 			int index_of_the_smaller_food=i;
-			
 			for (int j = i; j < foodArray.length; j++) {
 				if(foodArray[j].getClass()==classe&&foodArray[index_of_the_smaller_food].getClass()!=classe){
 					index_of_the_smaller_food=j;
@@ -58,7 +57,6 @@ public class MgmInterviewFoodSort {
 
 	}
 }
-	
 
 	static public class Potato extends FOOD {
 
@@ -68,8 +66,6 @@ public class MgmInterviewFoodSort {
 		}
 
 	}
-
-
 
 	static public class Tomato extends FOOD {
 		// default size for tomato
@@ -107,9 +103,6 @@ public class MgmInterviewFoodSort {
 		}
     }
 
-
-
-
 	public static void main(final String[] args) {
 
         int size[]={11,-1,1,42,77,55,46,12,11,9};
@@ -121,7 +114,7 @@ public class MgmInterviewFoodSort {
 		        add(new Potato(),size[i]);
 		   }
 		}
-	//	Tomato.sort(foodArray);
+		Tomato.sort(foodArray);
 	    System.out.println();
 	    Potato.sort(foodArray);
 	}
