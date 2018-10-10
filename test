@@ -1,121 +1,255 @@
-import java.util.Arrays;
-
-
+import java.util.*;
 
 public class MgmInterviewFoodSort {
 
     public static final int SIZE=10; 
-	public static FOOD[] foodArray = new FOOD[SIZE];
+
+    public static FOOD[] foodArray = new FOOD[SIZE];
+
     public static int currNbElement=0;
 
-	public static abstract class FOOD {
+    
 
-		private int size = -1;
+    static private class SortBySize implements Comparator<FOOD> 
+
+    {   
+
+        Class cls;
+
+        public SortBySize(Class cls){
+
+            this.cls=cls;
+
+        }
+
         
+
+        public int compare(FOOD f1, FOOD f2) 
+
+        { 
+
+            if(f1.getClass()==f2.getClass()){
+
+                return f1.size - f2.size;    
+
+            }
+
+            else{
+
+                if(f1.getClass()==cls){
+
+                    return -1;
+
+                }
+
+                else{
+
+                    return  1;  
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public static abstract class FOOD {
+
+        private int size = -1;
+
+        
+
         public void setSize(int size){
+
             this.size=size;
+
         }
+
         
+
         public int getSize(){
+
             return size;
+
         }
-		
-		public String toString(){
-		    return getClass().getName().substring(MgmInterviewFoodSort.class.getName().length() + 1) + " " + this.getSize();
-		}
 
-	
-	   protected static void sort(FOOD foodArray[],Class classe) {
+        
 
-		for (int i = 0; i < foodArray.length-1; i++) {
-			int index_of_the_smaller_food=i;
-			for (int j = i; j < foodArray.length; j++) {
-				if(foodArray[j].getClass()==classe&&foodArray[index_of_the_smaller_food].getClass()!=classe){
-					index_of_the_smaller_food=j;
-				}
-				else{
-				    if(foodArray[j].getClass()==classe&&foodArray[index_of_the_smaller_food].getClass()==classe){
-				        if(foodArray[j].getSize()<foodArray[index_of_the_smaller_food].getSize())
-				                index_of_the_smaller_food=j;
-				    }
-				    else{
-				         if(foodArray[j].getClass()!=classe&&foodArray[index_of_the_smaller_food].getClass()!=classe){
-				              if(foodArray[j].getSize()<foodArray[index_of_the_smaller_food].getSize()){
-				                  index_of_the_smaller_food=j;
-				              }
-				         }
-				    }
-				}
-			}
-			
-		 
-			        indexExchange(foodArray,i,index_of_the_smaller_food);
-			
-		}
+        public String toString(){
+
+            return getClass().getName().substring(MgmInterviewFoodSort.class.getName().length() + 1) + " " + this.getSize();
+
+        }
+
+    
+
+       protected static void sort(FOOD foodArray[],Class classe) {
+
+        for (int i = 0; i < foodArray.length-1; i++) {
+
+            int index_of_the_smaller_food=i;
+
+            
+
+            for (int j = i; j < foodArray.length; j++) {
+
+                if(foodArray[j].getClass()==classe&&foodArray[index_of_the_smaller_food].getClass()!=classe){
+
+                    index_of_the_smaller_food=j;
+
+                }
+
+                else{
+
+                    if(foodArray[j].getClass()==foodArray[index_of_the_smaller_food].getClass()){
+
+                        if(foodArray[j].getSize()<foodArray[index_of_the_smaller_food].getSize())
+
+                                index_of_the_smaller_food=j;
+
+                    }
+
+                }
+
+            }
+
+            
+
+         
+
+                    indexExchange(foodArray,i,index_of_the_smaller_food);
+
+            
+
+        }
 
          display(foodArray);
 
-	}
+    }
+
 }
 
-	static public class Potato extends FOOD {
+    
 
-		//
-		public static void sort(FOOD foodArray[]){
-		    sort(foodArray,Potato.class);
-		}
+    static public class Potato extends FOOD {
 
-	}
+        //
 
-	static public class Tomato extends FOOD {
-		// default size for tomato
-		Tomato(){
-		    setSize(121);
-		}
-		public static void sort(FOOD foodArray[]){
-		    sort(foodArray,Tomato.class);
-		}
+        public static void sort(FOOD foodArray[]){
 
-	}
-	
-    public static void add(FOOD food,int size){
-        if(currNbElement<SIZE){
-            foodArray[currNbElement]=food;
-            if(size!=-1){
-                foodArray[currNbElement].setSize(size);
-            }
-            currNbElement++;
+            sort(foodArray,Potato.class);
+
         }
+
     }
+
+    static public class Tomato extends FOOD {
+
+        // default size for tomato
+
+        Tomato(){
+
+            setSize(121);
+
+        }
+
+        public static void sort(FOOD foodArray[]){
+
+            sort(foodArray,Tomato.class);
+
+        }
+
+    }
+
     
+
+    public static void add(FOOD food,int size){
+
+        if(currNbElement<SIZE){
+
+            foodArray[currNbElement]=food;
+
+            if(size!=-1){
+
+                foodArray[currNbElement].setSize(size);
+
+            }
+
+            currNbElement++;
+
+        }
+
+    }
+
+    
+
     private static void indexExchange(FOOD[] foodArray,int i,int j){
+
         FOOD tmp;
+
         tmp=foodArray[i];
+
         foodArray[i]=foodArray[j];
+
         foodArray[j]=tmp;
+
     }
+
     
-    public static void display(FOOD[] foodArray){
-        //print result
-		for (FOOD food : foodArray) {
 
-			System.out.println(food);
-		}
+    public static void display(FOOD[] foodArray){
+
+        //print result
+
+        for (FOOD food : foodArray) {
+
+            System.out.println(food);
+
+        }
+
+      System.out.println();
+
     }
 
-	public static void main(final String[] args) {
+    public static void main(final String[] args) {
 
         int size[]={11,-1,1,42,77,55,46,12,11,9};
-		for(int i=0;i<SIZE;i++){
-		   if(i<2){
-		        add(new Tomato(),size[i]);
-		    }
-		   else{
-		        add(new Potato(),size[i]);
-		   }
-		}
-		Tomato.sort(foodArray);
-	    System.out.println();
-	    Potato.sort(foodArray);
-	}
+
+        for(int i=0;i<SIZE;i++){
+
+           if(i<2){
+
+                add(new Tomato(),size[i]);
+
+            }
+
+           else{
+
+                add(new Potato(),size[i]);
+
+           }
+
+        }
+
+        
+
+        Tomato.sort(foodArray);
+
+        
+
+        Potato.sort(foodArray);
+
+       
+
+        Arrays.sort(foodArray,new SortBySize(Tomato.class));
+
+        display(foodArray);
+
+        Arrays.sort(foodArray,new SortBySize(Potato.class));
+
+        display(foodArray);
+
+    }
+
 }
