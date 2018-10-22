@@ -1,0 +1,70 @@
+public class MyClass {
+    static private class Test{
+    public String[] chaine;
+    Integer tab[][];
+    Test(String[] chaine){
+        //without clone copy the reference and not a new value even though we put the clone out the class; 
+            this.chaine=chaine.clone();
+        tab=new Integer[chaine.length][];
+        for(int i=0;i<chaine.length;i++){
+            tab[i]=new Integer [chaine[i].length()];
+            for(int j=0;j<chaine[i].length();j++){
+                tab[i][j]=0;
+            }
+        }
+        
+    }
+    public void setTab(Integer[][] tab){
+        this.tab=tab.clone();
+    }
+    public void setCh(String [] ch){
+        this.chaine=ch.clone();
+    }
+    public void afficheTab(){
+    
+        for(Integer[]line :tab){
+            for(Integer elem : line){
+                System.out.print(elem);
+            }
+            System.out.println();
+        }
+    }
+    public String toString(){
+            String res="";
+            for(String ch:chaine){
+                res+=ch+"\n";
+            }
+            return res;
+        }
+    }
+    
+    public static void main(String args[]) {
+        int x=10;
+        int y=25;
+        int z=x+y;
+        String[] ch={"alex","alex2","alex3"};
+        String[] ch2;
+        ch2=ch.clone();
+        Test test=new Test(ch2);
+        Test test2=new Test(ch2.clone());
+        System.out.println(test);
+        ch2[0]="jean";
+        System.out.println(test);
+        System.out.println("Sum of x+y = " + z);
+        
+        test.afficheTab();
+        System.out.println();
+        test.tab[1][1]=22;
+        test.afficheTab();
+        //test2.tab=test.tab.clone();
+        test2.setTab(test.tab.clone());
+        test.tab[2][3]=3;
+        System.out.println();
+        test2.afficheTab();
+        test2.setCh(test.chaine);
+        test.chaine[0]="bob";
+        System.out.println(test2);
+        
+        
+    }
+}
