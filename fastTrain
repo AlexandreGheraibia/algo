@@ -1,0 +1,248 @@
+//to do rewrite duplicate part;
+
+function calculNextState(currentInd,sections,currentSpeed,offset){
+    var distance,maxSpeed,nextDistance,nextMaxSpeed;
+     var nextSpeed=currentSpeed[currentInd]+1;
+     var nextInd=currentInd;
+     [distance,maxSpeed]=sections[currentInd];
+     var val=0;
+     var time=0;
+     var cSpeed= currentSpeed[currentInd];
+     var reset=false;
+     distance=distance-offset;
+     if(currentInd!=sections.length-1){
+            [nextDistance,nextMaxSpeed]=sections[currentInd+1];
+            maxSpeed=Math.min(maxSpeed,nextMaxSpeed);    
+            if(currentInd==0){
+                if(cSpeed<maxSpeed){
+                    val=cSpeed*(cSpeed+1)/2;
+                    if(val<distance){
+                        cSpeed++;
+                    }
+                    else{
+                        nextInd++;
+                        time=cSpeed;
+                        if(val==distance){
+                            offset=0;
+                        }
+                        else{
+                            offset=val-distance;
+                        }
+                    }
+                }
+                else{
+                        cSpeed--;
+                        nextInd++;
+                        val=cSpeed*(cSpeed+1)/2;
+                        time=cSpeed;
+                        if(val==distance){
+                            offset=0;
+                        }
+                        else{   
+                                if(val>distance){
+                                    offset=val-distance;
+                                }
+                                else{
+                                     var j=0;
+                                      while(val<distance){
+                                        val+=cSpeed;
+                                        j++;
+                                      }
+                                    time+=j;
+                                    offset=distance-val;
+                                    
+                                }
+                        }
+                }
+                
+            }
+            else{
+                    if(cSpeed<maxSpeed){
+                        val=cSpeed*(cSpeed+1)/2;
+                        if(val<distance){
+                            cSpeed++;
+                        }
+                        else{
+                            nextInd++;
+                            time=cSpeed;
+                            if(val==distance){
+                                offset=0;
+                             }
+                            else{
+                                offset=val-distance;
+                            }
+                        }
+                    }
+                    else{
+                        cSpeed--;
+                        
+                    }
+                      
+            
+            }
+              currentSpeed[nextInd]=cSpeed;
+     }
+     else{
+        [nextInd,currentSpeed,time]=onlyOneStation(nextInd,sections,currentSpeed,offset);
+     }
+     
+     return [nextInd,time,offset,sections];
+}
+function onlyOneStation(currentInd,sections,currentSpeed,offset){
+     var distance,maxSpeed,nextDistance,nextMaxSpeed;
+     var cSpeed= currentSpeed[currentInd];
+     var nextInd=currentInd;
+     [distance,maxSpeed]=sections[currentInd];
+     var time=0;
+     var val=0;
+     distance=distance-offset;
+     console.log("ici "+ currentInd,cSpeed,distance);
+     if(cSpeed<maxSpeed){
+        val=cSpeed*(cSpeed);
+        if(val<distance){
+            cSpeed++;
+            currentSpeed[currentInd]=cSpeed;
+        }
+        else{
+            nextInd++;
+            if(val!=distance){
+                cSpeed--;
+                val=cSpeed*(cSpeed);
+                time=2*cSpeed;
+                if(distance-val==0)
+                    time-=1;
+            }else{
+                 time=2*cSpeed-1;
+            }
+                
+        }
+     }
+     else{
+            cSpeed--;
+            val=cSpeed*(cSpeed);
+            if(val<distance){
+                if(distance-val<=cSpeed){
+                    time=2*cSpeed;
+                    nextInd++;
+                }
+                else{
+                        var i=0;
+                        while(val!=distance&&i<cSpeed){
+                            i++;
+                            val=cSpeed*(cSpeed)+i*(i+1)/2;
+                        }
+                        time=2*cSpeed-1+i;
+                        if(val!=distance){
+                            var j=0;
+                            while(val!=distance){                      
+                                while(val<distance){
+                                    val+=cSpeed;
+                                    j++;
+                                }
+                                if(val!=distance){
+                                    val-=cSpeed;
+                                    j--;
+                                    if(cSpeed>1)
+                                        cSpeed--;
+                                }
+                            }
+                            time=time+j;
+                        }
+                        nextInd++;
+                }
+            }
+            else{
+                if(distance==val){
+                    time=2*cSpeed-1;
+                    nextInd++;
+                }
+                else{
+                        var i=0;
+                        while(val>distance){
+                            cSpeed--;
+                            val=cSpeed*(cSpeed);
+                        }
+                        if(distance-val<=cSpeed){
+                            time=2*cSpeed;
+                            nextInd++;
+                        }
+                        else{
+                                var i=0;
+                                while(val!=distance&&i<cSpeed){
+                                    i++;
+                                    val=cSpeed*(cSpeed)+i*(i+1)/2;
+                                }
+                                time=2*cSpeed-1+i;
+                                if(val!=distance){
+                                var j=0;
+                                while(val!=distance){
+                                    
+                                    while(val<distance){
+                                        val+=cSpeed;
+                                        j++;
+                                    }
+                                    if(val!=distance){
+                                        val-=cSpeed;
+                                        j--;
+                                        if(cSpeed>1)
+                                            cSpeed--;
+                                    }
+                                }
+                                time=time+j;
+                            }
+                                    nextInd++;
+                        }
+                    
+                }
+            }
+     }
+     return [nextInd,currentSpeed,time];
+}
+
+function fastTrain(numbers) {
+    var sections=numbers;
+    var distance;
+    var maxSpeed;
+    var stationDepart=0;
+    var stationArrivé=numbers.length;
+    var i=0;
+    var time=new Array();
+    var offset=new Array();
+    var currentSpeed=new Array();
+    offset[0]=0;
+    currentSpeed[0]=1;
+    var res=false;
+    var j;
+    while(i<numbers.length){//parcours des sections
+     
+        if(numbers.length>1){
+              
+              [j,time[i],offset[i+1],numbers,res]=calculNextState(i,numbers,currentSpeed,offset[i]);
+              i=j;
+                if(res){
+                      currentSpeed[0]=1;
+                      i=0;      
+                }
+               
+        }
+        else{
+            [i,currentSpeed,time[i]]=onlyOneStation(i,numbers,currentSpeed,0);
+        }
+    }
+    var result="";
+   for(var t of time)
+       result+=" "+t; 
+       console.log(result);
+    return time.reduce((a,b)=>a+b,0); 
+}
+
+var assert = require('assert');
+
+if (!global.is_checking) {
+    console.log('Example:');
+   console.log(fastTrain([[4, 2]]));
+   assert.equal(fastTrain([[5, 5]]), 4);
+   assert.equal(fastTrain([[9, 10]]), 5);
+   assert.equal(fastTrain([[4, 3], [5, 5]]), 6);
+    console.log('"Run" is good. How is "Check"?');
+}
