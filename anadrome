@@ -36,7 +36,7 @@ int isAnadrome(char *tab){
         }
         else{
             if(count%2!=0){
-                oddNb++; //count the number of odd count 
+                oddNb++; //count the number of odd counts 
             }
             count=1;
         }
