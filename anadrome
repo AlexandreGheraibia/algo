@@ -1,0 +1,55 @@
+#include<stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void exchange(char *elem1,char* elem2){
+        char tmp;
+        tmp=*elem1;
+        *elem1=*elem2;
+        *elem2=tmp;
+}
+
+void tabToLower(char* tab){
+    for(int i=0;i<strlen(tab);i++){
+        *(tab+i)=tolower(tab[i]);
+    }
+}
+
+void sort(char * tab){
+    int i,j;
+    for(i=0;i<strlen(tab)-1;i++){
+        for(j=i+1;j<strlen(tab);j++){
+            if(tab[i]>tab[j]){
+                exchange(tab+i,tab+j);
+            }
+        }
+    }
+}
+
+int isAnadrome(char *tab){
+    int count=1,oddNb=0;
+    tabToLower(tab);
+    sort(tab);
+    for(int i=1;i<strlen(tab);i++){
+        if(tab[i-1]==tab[i]){//count the number of identical elements 
+            count++;
+        }
+        else{
+            if(count%2!=0){
+                oddNb++; //count the number of odd count 
+            }
+            count=1;
+        }
+    }
+    
+    if(count%2!=0){
+        oddNb++;
+    }
+    
+    return (strlen(tab)%2==0&&oddNb==0)||(strlen(tab)%2==1&&oddNb==1);
+}
+
+int main() {
+   char tab[]="Sooool";
+   printf("%d",isAnadrome(tab));
+}
