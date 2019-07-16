@@ -2,20 +2,20 @@
 #include <string.h>
 #include <ctype.h>
 
-void exchange(char *elem1,char* elem2){
+void exchange(char *elem1,char *elem2){
         char tmp;
         tmp=*elem1;
         *elem1=*elem2;
         *elem2=tmp;
 }
 
-void tabToLower(char* tab){
+void tabToLower(char *tab){
     for(int i=0;i<strlen(tab);i++){
         *(tab+i)=tolower(tab[i]);
     }
 }
 
-void sort(char * tab){
+void sort(char *tab){
     int i,j;
     for(i=0;i<strlen(tab)-1;i++){
         for(j=i+1;j<strlen(tab);j++){
