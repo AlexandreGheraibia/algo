@@ -29,16 +29,16 @@ public class Finder {
               if(x==0) {
                   dir=1;
               }
-              if(!visited[x+dir][y]){  //Can I visited South
+              if(!visited[x+dir][y]){  //Can I visit South
                     v= deepCopyIntMatrix(visited);
                      ret=Math.min(ret,path(x+dir,y,maze,v,n)+Math.abs(maze[x][y]-maze[x+dir][y]));
               }
               if(y>0&&y<n-1){
-                  if(!visited[x][y+1]){ //Can I visited East
+                  if(!visited[x][y+1]){ //Can I visit East
                         v= deepCopyIntMatrix(visited);
                         ret=Math.min(ret,path(x,y+1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y+1]));
                   }
-                  if(!visited[x][y-1]){ //Can I visited West
+                  if(!visited[x][y-1]){ //Can I visit West
                       v= deepCopyIntMatrix(visited);
                      ret=Math.min(ret,path(x,y-1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y-1]));
                   }
@@ -50,14 +50,14 @@ public class Finder {
                     }
                     else{
                         if(y==n-1){
-                            if(!visited[x][y-1]){//Can I visited West
+                            if(!visited[x][y-1]){//Can I visit West
                                  v= deepCopyIntMatrix(visited);
                                  ret=Math.min(ret,path(x,y-1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y-1]));
                             }
                         }
                         else{
                               if(y==0){
-                                   if(!visited[x][y+1]){//Can I visited East
+                                   if(!visited[x][y+1]){//Can I visit East
                                    v= deepCopyIntMatrix(visited);
                                    ret=Math.min(ret,path(x,y+1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y+1]));
                                   }
@@ -68,36 +68,36 @@ public class Finder {
         }
         else{
                 // System.out.println("n:"+n+" x: "+x+" y: "+y);
-                  if(!visited[x+1][y]){  //Can I visited North
+                  if(!visited[x+1][y]){  //Can I visit North
                      v= deepCopyIntMatrix(visited);
                      ret=Math.min(ret,path(x+1,y,maze,v,n)+Math.abs(maze[x][y]-maze[x+1][y]));
                   }
-                  if(!visited[x-1][y]){  //Can I visited South
+                  if(!visited[x-1][y]){  //Can I visit South
                      v= deepCopyIntMatrix(visited);
                      ret=Math.min(ret,path(x-1,y,maze,v,n)+Math.abs(maze[x][y]-maze[x-1][y]));
                   }
                   
                   if(y>0&&y<n-1){
                        
-                          if(!visited[x][y+1]){ //Can I visited East
+                          if(!visited[x][y+1]){ //Can I visit East
                              v= deepCopyIntMatrix(visited);
                             ret=Math.min(ret,path(x,y+1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y+1]));
                           }
-                          if(!visited[x][y-1]){ //Can I visited West
+                          if(!visited[x][y-1]){ //Can I visit West
                              v= deepCopyIntMatrix(visited);
                             ret=Math.min(ret,path(x,y-1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y-1]));
                           }
                   }
                   else{
                       if(y==n-1){
-                          if(!visited[x][y-1]){//Can I visited West
+                          if(!visited[x][y-1]){//Can I visit West
                                 v= deepCopyIntMatrix(visited);
                                ret=Math.min(ret,path(x,y-1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y-1]));
                           }
                       }
                       else{
                             if(y==0){
-                                 if(!visited[x][y+1]){//Can I visited East
+                                 if(!visited[x][y+1]){//Can I visit East
                                  v= deepCopyIntMatrix(visited);
                                  ret=Math.min(ret,path(x,y+1,maze,v,n)+Math.abs(maze[x][y]-maze[x][y+1]));
                                 }
