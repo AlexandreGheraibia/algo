@@ -222,7 +222,6 @@ class Graph{
              addClosedL(nodes[0][0]);
              Node bChoise=null;
              currNode=getCurrElem();
-             int min=Integer.MAX_VALUE;
              do{
                for(int i=0;i<currNode.getArcs().size();i++){
                      Arc a= currNode.getArcs().get(i);
