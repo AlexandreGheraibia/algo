@@ -85,7 +85,6 @@ class Node{
    
    public void add(Node n){
        this.arcs.add(new Arc(n,Math.abs(n.getValue()-this.getValue())));
-   
    }
    
    public void setParent(Node parent){
@@ -98,7 +97,6 @@ class Node{
    
    public List<Arc> getArcs(){
        return arcs;
-   
    }
    
    public void setArcs(List<Arc> arcs){
