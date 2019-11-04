@@ -116,7 +116,6 @@ class Graph{
     public Graph(String maze){
         nodes=strToArray(maze);
         createArcs();
-        
     }
      
     private Node[][] strToArray(String maze){
@@ -170,32 +169,31 @@ class Graph{
                                          nodes[i][j].add(nodes[i][j-1]);
                                          nodes[i][j].add(nodes[i+1][j]);
                                          nodes[i][j].add(nodes[i-1][j]);
-                                     
                                      }
-                                  }
-                               }
+                                }
+                              }
                           }
                       }
-                 }
-             }
+                  }
+            }
         }
-   }
+    }
+   
     public Node[][] getArray(){
         return nodes;
     }
-    private void addOpenL(Node n){
+   
+   private void addOpenL(Node n){
         if(!n.isInClosedList()){
               if(!n.isInOpenedList()){
                   n.setOpenedList();
                   openedList.add(n);
                   openedList.sort(Comparator.comparingDouble(Node::getHeuCost));
-              }
-            
-        }
-    
+              }   
+        }    
     }
     
-     private void addClosedL(Node n){
+    private void addClosedL(Node n){
         if(!n.isInClosedList()){
               if(n.isInOpenedList()){
                   n.setClosedList();
@@ -207,6 +205,7 @@ class Graph{
         }
     
     }
+    
    //need check is null
    private Node getCurrElem(){
        return closedList.size()>0?closedList.get(closedList.size() - 1):null;
@@ -217,34 +216,35 @@ class Graph{
    }
    
    public int path(){
-             Node currNode;
-             addOpenL(nodes[0][0]);
-             addClosedL(nodes[0][0]);
-             Node bChoise=null;
-             currNode=getCurrElem();
-             do{
-               for(int i=0;i<currNode.getArcs().size();i++){
-                     Arc a= currNode.getArcs().get(i);
-                     Node n=a.getNode();
-                     n.updateCost(a.getDistance()+currNode.getCost());
-                     n.generateHeuCost();
-                     n.setParent(currNode);
-                     addOpenL(n);
-                     
-               }
-               bChoise=bestChoise();
-               
-               if(bChoise!=null){
-                    addClosedL(bChoise);
-                    currNode=getCurrElem();
-               }  
-             }
-             while(bChoise!=null&&bChoise!=nodes[n-1][n-1]);
-           
-           if(bChoise==nodes[n-1][n-1]){
-                return (int)bChoise.getCost();
-            }
-            return 0;
+       Node currNode;
+       addOpenL(nodes[0][0]);
+       addClosedL(nodes[0][0]);
+       Node bChoise=null;
+       currNode=getCurrElem();
+       
+       do{
+         for(int i=0;i<currNode.getArcs().size();i++){
+               Arc a= currNode.getArcs().get(i);
+               Node n=a.getNode();
+               n.updateCost(a.getDistance()+currNode.getCost());
+               n.generateHeuCost();
+               n.setParent(currNode);
+               addOpenL(n); 
+         }
+         
+         bChoise=bestChoise();
+         
+         if(bChoise!=null){
+              addClosedL(bChoise);
+              currNode=getCurrElem();
+         }  
+       }
+       while(bChoise!=null&&bChoise!=nodes[n-1][n-1]);
+     
+      if(bChoise==nodes[n-1][n-1]){
+          return (int)bChoise.getCost();
+      }
+      return 0;
    }
 }
 
