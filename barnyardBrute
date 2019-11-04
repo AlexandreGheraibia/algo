@@ -2,7 +2,7 @@
  * Auto-generated code below aims at helping you parse
  * the standard input according to the problem statement.
  **/
- //resolution en brute force 
+ 
  //essayer par résolution de systeme linéaire
  //http://maths.cnam.fr/IMG/pdf/Alg.3_resolution_des_systemes_lineaires.pdf
 var featureMap={
