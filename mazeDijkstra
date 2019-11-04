@@ -1,0 +1,192 @@
+import java.util.*; 
+import java.util.stream.Collectors; 
+import java.util.stream.Stream; 
+import java.util.stream.IntStream; 
+import java.util.Comparator;
+class Arc{
+  private Node n;
+  private int d;
+  
+  Arc(Node n, int d){
+    this.n=n;
+    this.d=d;
+  }
+  
+  public int getDistance(){
+    return this.d;
+  }
+  
+  public Node getNode(){
+    return this.n;
+  }
+}
+
+class Node{
+   private int value=Integer.MAX_VALUE;
+   private List<Arc>arcs=new ArrayList<>();
+   private int distance=Integer.MAX_VALUE;
+   private boolean inP=false;
+   
+   Node(String value){
+        this.value=Integer.valueOf(value);
+   }
+   
+   Node(int value){
+        this.value=value;
+   }
+   
+   public int getValue(){
+       return this.value;
+   }
+   
+   public void setDistance(int distance){
+     this.distance=distance;
+   }
+   
+   public int getDistance(){
+       return this.distance;
+   }
+   
+   public void add(Node n){
+   
+       this.arcs.add(new Arc(n,Math.abs(n.getValue()-this.getValue())));
+   }
+   
+   public List<Arc> getArcs(){
+       return arcs;
+   }
+   
+   public void setArcs(List<Arc> arcs){
+     this.arcs=arcs;
+   }
+   
+   public boolean isInP(){
+       return inP;
+   } 
+   
+   public void setInP(boolean inP){
+       this.inP=inP;
+   }
+}
+
+class Graph{
+    private int n;
+    private Node[][] nodes;
+    private List<Node> outP;
+    private List<Node> P;
+    
+    public Graph(String maze){
+        nodes=strToArray(maze);
+        createArcs();
+    }
+     
+    private Node[][] strToArray(String maze){
+      return Arrays.stream(maze.split("\n"))
+                       .map(line->Arrays.stream(line.split("")).map(Node::new).toArray(Node[]::new))
+                       .toArray(Node[][]::new);
+    }
+    
+    private void createArcs(){
+         n=nodes.length;
+         for(int i=0;i<n;i++){
+                 int n2=nodes[i].length;
+             for(int j=0;j<n2;j++){
+                   if((i==0||i==n-1)&&j!=0&&j!=n2-1){
+                       int dir=(i==0?1:-1);
+                       nodes[i][j].add(nodes[i+dir][j]);
+                       nodes[i][j].add(nodes[i][j+1]);
+                       nodes[i][j].add(nodes[i][j-1]);
+                   }
+                   else{
+                        if((j==0||j==n2-1)&&i!=0&&i!=n-1){
+                           int dir=(j==0?1:-1);
+                           nodes[i][j].add(nodes[i][j+dir]);
+                           nodes[i][j].add(nodes[i+1][j]);
+                           nodes[i][j].add(nodes[i-1][j]);
+                        }
+                        else{
+                            if(i==0&&j==0){//top left corner
+                              nodes[i][j].add(nodes[i+1][j]);
+                              nodes[i][j].add(nodes[i][j+1]);
+                            }
+                            else{
+                                if(i==0&&j==n2-1){//top righ corner
+                                  nodes[i][j].add(nodes[i][j-1]);
+                                  nodes[i][j].add(nodes[i+1][j]);
+                                }
+                                else{
+                                  if(i==n-1&&j==n2-1){//bottom right corner
+                                     nodes[i][j].add(nodes[i-1][j]);
+                                     nodes[i][j].add(nodes[i][j-1]);
+                                  }
+                                  else{
+                                     if(i==n-1&&j==0){//bottom left corner
+                                       nodes[i][j].add(nodes[i-1][j]);
+                                       nodes[i][j].add(nodes[i][j+1]);
+                                     }
+                                     else{
+                                         nodes[i][j].add(nodes[i][j+1]);
+                                         nodes[i][j].add(nodes[i][j-1]);
+                                         nodes[i][j].add(nodes[i+1][j]);
+                                         nodes[i][j].add(nodes[i-1][j]);
+                                     }
+                                 }
+                              }
+                          }
+                      }
+                  }
+            }
+        }
+    }
+   
+   public Node[][] getArray(){
+        return nodes;
+   }
+   
+   private Node nodeoutPLessFar(){
+         Node nf=outP.stream().filter(n->!n.isInP())
+                      .sorted(Comparator.comparingInt(Node::getDistance))
+                      .findFirst()
+                      .orElse(null);
+         if(nf!=null){
+             outP.remove(nf);
+         }
+         return nf;
+   }
+   
+   public int dijktra(){
+       nodes[0][0].setDistance(0);
+       P=new ArrayList<>();
+       outP=Arrays.stream(nodes).flatMap(line->Arrays.stream(line)).collect(Collectors.toList());
+      
+       while(outP.size()>0){
+         Node a=nodeoutPLessFar();
+         if(a!=null){
+           a.setInP(true);
+           P.add(a);
+           a.getArcs().stream().filter(arc->!arc.getNode().isInP()).forEach(arc->{
+               arc.getNode().setDistance(Math.min(arc.getNode().getDistance(),a.getDistance()+arc.getDistance()));                   
+           });
+            
+         }
+         
+       }
+       return nodes[n-1][n-1].getDistance();
+   }
+}
+
+public class Finder {
+    static int pathFinder(String maze) {
+        System.out.println(maze.length());
+        System.out.println();
+        if(maze.length()>1){
+            Graph g=new Graph(maze);
+            g.dijktra();
+            Node[][] nodes=g.getArray();
+            int len=nodes.length-1;
+            int dist=nodes[len][len].getDistance();
+            return dist==Integer.MAX_VALUE?0:dist;
+        }
+        return 0;
+    }
+}
