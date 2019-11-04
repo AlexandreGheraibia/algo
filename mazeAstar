@@ -29,8 +29,7 @@ class Node{
    private float costUE=0; //Theorical cost until the end;
    private float heuCost=0; //heuristic cost;
    private Node parent=null;
-  
-  private List<Arc>arcs=new ArrayList<>();
+   private List<Arc>arcs=new ArrayList<>();
    
    public void generateHeuCost(){
        this.heuCost=this.costSS+this.costUE;
@@ -108,7 +107,6 @@ class Graph{
     private Node[][] nodes;
     private List<Node> openedList=new ArrayList<>();
     private List<Node> closedList=new ArrayList<>();
-  
     
     public Graph(String maze){
         nodes=strToArray(maze);
@@ -176,9 +174,9 @@ class Graph{
         }
     }
    
-    public Node[][] getArray(){
+   public Node[][] getArray(){
         return nodes;
-    }
+   }
    
    private void addOpenL(Node n){
         if(!n.isInClosedList()){
@@ -188,9 +186,9 @@ class Graph{
                   openedList.sort(Comparator.comparingDouble(Node::getHeuCost));
               }   
         }    
-    }
+   }
     
-    private void addClosedL(Node n){
+   private void addClosedL(Node n){
         if(!n.isInClosedList()){
               if(n.isInOpenedList()){
                   n.setClosedList();
@@ -226,9 +224,7 @@ class Graph{
                n.setParent(currNode);
                addOpenL(n); 
          }
-         
          bChoise=bestChoise();
-         
          if(bChoise!=null){
               addClosedL(bChoise);
               currNode=getCurrElem();
