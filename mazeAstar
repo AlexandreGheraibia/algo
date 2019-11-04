@@ -49,7 +49,7 @@ class Node{
        return this.value;
    }
    
-  public void setCostUntilEnd(float costUE){
+   public void setCostUntilEnd(float costUE){
          this.costUE=costUE;
    }
    public void updateCost(float costSS){
@@ -170,7 +170,7 @@ class Graph{
                                          nodes[i][j].add(nodes[i+1][j]);
                                          nodes[i][j].add(nodes[i-1][j]);
                                      }
-                                }
+                                 }
                               }
                           }
                       }
