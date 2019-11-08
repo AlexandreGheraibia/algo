@@ -1,7 +1,11 @@
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import org.junit.runners.JUnit4;
-
+import java.util.*; 
+import java.util.stream.Collectors; 
+import java.util.stream.Stream; 
+import java.util.stream.IntStream; 
+import java.util.Comparator;
 
 public class SolutionTest {
     @Test
@@ -46,7 +50,7 @@ public class SolutionTest {
                    "000109\n"+
                    "001010",
                    
-                   "82\n"+
+                   "82\n"+ //sol was 10
                    "46",
                    
                   "2043\n"+
@@ -189,12 +193,23 @@ public class SolutionTest {
                   "5615911519012826790014926589624900\n"+
                   "5917919512206907887022992883713497\n"+
                   "7307297845242380713532418967175486\n"+
-                  "2538867882698168169845067464504053",
+                  "2538867882698168169845067464504053"
                   };
-                  
+     
       for(String s:test){          
            assertEquals(Finder.pathFinderB(s),  Finder.pathFinder(s));
       }
-      
+       int n=50;
+       Stream.iterate(0,i->i+1).limit(n).forEach(i->{
+                                          String s=IntStream.range(0,i)
+                                                   .mapToObj(x->IntStream.range(0,i)
+                                                                          .map(j->(int)(Math.random()*10))
+                                                                          .mapToObj(String::valueOf) 
+                                                                          .collect(Collectors.joining(""))
+                                                  ).collect(Collectors.joining("\n"));
+                                          System.out.println(s);
+                                          System.out.println();
+                                          assertEquals(Finder.pathFinderB(s),  Finder.pathFinder(s));
+                                         });
     }
 }
