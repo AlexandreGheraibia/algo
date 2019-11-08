@@ -415,7 +415,7 @@ public class Finder {
             Graph g=new Graph(maze);
             Node[][] nodes=g.getArray();
             int n=nodes.length;
-            int outC=g.pathAStar(nodes[n-1][n-1],nodes[0][0]); 
+            int outC=g.pathAStar(nodes[0][0],nodes[n-1][n-1]); 
             return outC;
         }
         return 0;
