@@ -243,7 +243,7 @@ class Graph{
 		  }
 	  }
 		  
-	  nCurr.setCostUntilEnd((float)Math.floor(2*(n-1)-i-j));
+	  nCurr.setCostUntilEnd((float)(2*(n-1)-i-j));
       
 	}
    
