@@ -199,17 +199,19 @@ public class SolutionTest {
       for(String s:test){          
            assertEquals(Finder.pathFinderB(s),  Finder.pathFinder(s));
       }
-       int n=50;
-       Stream.iterate(0,i->i+1).limit(n).forEach(i->{
-                                          String s=IntStream.range(0,i)
-                                                   .mapToObj(x->IntStream.range(0,i)
-                                                                          .map(j->(int)(Math.random()*10))
-                                                                          .mapToObj(String::valueOf) 
-                                                                          .collect(Collectors.joining(""))
-                                                  ).collect(Collectors.joining("\n"));
-                                          System.out.println(s);
-                                          System.out.println();
-                                          assertEquals(Finder.pathFinderB(s),  Finder.pathFinder(s));
-                                         });
+      int n=50;
+      Stream.iterate(0,i->i+1)
+           .limit(n)
+           .forEach(i->{
+              String s=IntStream.range(0,i)
+                       .mapToObj(x->IntStream.range(0,i)
+                                              .map(j->(int)(Math.random()*10))
+                                              .mapToObj(String::valueOf) 
+                                              .collect(Collectors.joining(""))
+                      ).collect(Collectors.joining("\n"));
+              System.out.println(s);
+              System.out.println();
+              assertEquals(Finder.pathFinderB(s),  Finder.pathFinder(s));
+             });
     }
 }
