@@ -327,8 +327,8 @@ class Graph{
   
 	private Node bestChoise(Node n){
 	   if(openedList.size()>0){
-			 List<Node> l=openedList.stream().filter(e->e.getHeuCost()==openedList.get(0).getHeuCost())
-									.collect(Collectors.toList());
+		List<Node> l=openedList.stream().filter(e->e.getHeuCost()==openedList.get(0).getHeuCost())
+				       .collect(Collectors.toList());
 		  // System.out.println("child :");//-----------------------
 		   return l.stream()
 				   .sorted(Comparator.comparingDouble(Node::getCostUntilEnd).reversed())
