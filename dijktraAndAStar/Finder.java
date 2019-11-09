@@ -30,9 +30,9 @@ class Node{
    private boolean inP=false;
    private boolean inOpened=false;
    private boolean inClosed=false;
-   private float costSS=0; //effectif cost since Start
-   private float costUE=0; //Theorical cost until the end;
-   private float heuCost=0; //heuristic cost;
+   private int costSS=0; //effectif cost since Start
+   private int costUE=0; //Theorical cost until the end;
+   private int heuCost=0; //heuristic cost;
    private Node parent=null;
    private int i=0;
    private int j=0;
@@ -95,15 +95,15 @@ class Node{
        this.heuCost=this.costSS+this.costUE;
    }
    
-   public void setCostUntilEnd(float costUE){
+   public void setCostUntilEnd(int costUE){
          this.costUE=costUE;
    }
    
-   public float getCostUntilEnd(){
+   public int getCostUntilEnd(){
          return this.costUE;
    }
    
-   public void updateCost(float costSS){
+   public void updateCost(int costSS){
          this.costSS=costSS;
    }
    
@@ -127,11 +127,11 @@ class Node{
          return inClosed;
    }
    
-   public float getHeuCost(){
+   public int getHeuCost(){
        return heuCost;
    }
    
-   public float getCost(){
+   public int getCost(){
        return this.costSS;
    }
    
@@ -144,9 +144,8 @@ class Node{
    }
    
    public String toString(){
-   String s=this.getHeuCost()+" "+this.getValue()+" ";
-           if(this.parent!=null)
-            s+=this.parent.getValue()+",";
+   String s=this.getHeuCost()+" ";
+         
         return s; 
    } 
 }
@@ -243,7 +242,7 @@ class Graph{
 		  }
 	  }
 		  
-	  nCurr.setCostUntilEnd((float)(2*(n-1)-i-j));
+	  nCurr.setCostUntilEnd(n-i-j);
       
 	}
    
@@ -252,10 +251,11 @@ class Graph{
 	}
    
 	private Node nodeoutPLessFar(){
-		 Node nf=outP.stream().filter(n->!n.isInP())
-					  .sorted(Comparator.comparingInt(Node::getDistance))
-					  .findFirst()
-					  .orElse(null);
+		 Node nf=outP.stream()
+          .filter(n->!n.isInP())
+          .sorted(Comparator.comparingInt(Node::getDistance))
+          .findFirst()
+          .orElse(null);
 		 if(nf!=null){
 			 outP.remove(nf);
 		 }
@@ -293,13 +293,47 @@ class Graph{
 	   return d==Integer.MAX_VALUE?0:d;
 	}
   
+  private void insertOpenList(Node n){
+        int min=0;
+        int max=openedList.size()-1;
+        int middle=(min+max)/2;
+        
+        while(min<max){
+         
+          if(openedList.get(middle).getHeuCost()>n.getHeuCost()){
+              max=middle-1;
+          }
+          else{
+               if(openedList.get(middle).getHeuCost()<n.getHeuCost()){
+                  min=middle+1;
+              }
+              else{
+                  min=middle;
+                  max=middle;
+              }
+          }
+           middle=(min+max)/2;
+        }
+        
+      if(openedList.size()>0){
+          if(n.getHeuCost()>=openedList.get(middle).getHeuCost()){
+                 openedList.add(middle+1,n);
+          }
+          else{
+               openedList.add(middle,n);
+          }
+      }
+      else{
+       openedList.add(n);
+      }
+      
+      
+  }
 	private void addOpenL(Node n){
 		if(!n.isInClosedList()){
 			  if(!n.isInOpenedList()){
 				  n.setOpenedList();
-				//  System.out.println(n.getValue());//-----------------------
-				  openedList.add(n);
-				  openedList.sort(Comparator.comparingDouble(Node::getHeuCost));
+          insertOpenList(n);
 			  }   
 		}    
 	}
@@ -327,12 +361,12 @@ class Graph{
   
 	private Node bestChoise(Node n){
 	   if(openedList.size()>0){
-		List<Node> l=openedList.stream().filter(e->e.getHeuCost()==openedList.get(0).getHeuCost())
-				       .collect(Collectors.toList());
+			 List<Node> l=openedList.stream().filter(e->e.getHeuCost()==openedList.get(0).getHeuCost())
+									.collect(Collectors.toList());
 		  // System.out.println("child :");//-----------------------
 		   return l.stream()
 				   .sorted(Comparator.comparingDouble(Node::getCostUntilEnd).reversed())
-				   .findFirst().orElse(l.get(0));
+				   .findFirst().orElse(openedList.get(0));
 		}
 	   return null;
 	}
@@ -350,7 +384,6 @@ class Graph{
 		   currNode.setArcs(new ArrayList<>());
 		   createArcs(currNode.getI(), currNode.getJ());
 		 }
-		 
 		 for(int i=0;i<currNode.getArcs().size();i++){
 			   Arc a= currNode.getArcs().get(i);
 			   Node n=a.getNode();
@@ -362,13 +395,14 @@ class Graph{
 					   addOpenL(n); 
 					}
 					else{
-						 float d=Math.min(n.getHeuCost(),a.getDistance()+currNode.getCost()+n.getCostUntilEnd());
+						 int d=Math.min(n.getCost(),a.getDistance()+currNode.getCost());
 						 if(d!=n.getHeuCost()){
 							  n.updateCost(a.getDistance()+currNode.getCost());
 							  n.generateHeuCost();
 							  n.setParent(currNode);
 						 }
-						  openedList.sort(Comparator.comparingDouble(Node::getHeuCost));
+						 openedList.remove(n);
+             insertOpenList(n);
 					}
 			   }
 		 }
@@ -418,6 +452,7 @@ public class Finder {
             int outC=g.pathAStar(nodes[0][0],nodes[n-1][n-1]); 
             return outC;
         }
+       
         return 0;
     }
     
