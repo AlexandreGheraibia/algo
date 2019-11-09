@@ -195,56 +195,25 @@ class Graph{
     }
      
     private void createArcs(int i, int j){
-    
-	   Node nCurr= nodes[i][j];
-	   if((i==0||i==n-1)&&j!=0&&j!=n-1){
-		   int dir=(i==0?1:-1);
-		   nCurr.add(nodes[i+dir][j]);
-		   nCurr.add(nodes[i][j+1]);
-		   nCurr.add(nodes[i][j-1]);
-	   }
-	   else{
-			if((j==0||j==n-1)&&i!=0&&i!=n-1){
-			   int dir=(j==0?1:-1);
-			   nCurr.add(nodes[i+1][j]);
-			   nCurr.add(nodes[i][j+dir]); 
-			   nCurr.add(nodes[i-1][j]);
+	Node nCurr= nodes[i][j];
+	int tab[]=new int[]{-1,1};
+	int nextI,nextJ;
+	for(int c=0;c<2;c++){
+		for(int a:tab){
+			 if(c==0){
+			      nextI=i+a;
+			      nextJ=j;
+			 }
+			 else{
+			      nextI=i;
+			      nextJ=j+a;
+			 }
+			 if(nextI>=0&&nextI<=n-1&&nextJ>=0&&nextJ<=n-1){
+			  	 nCurr.add(nodes[nextI][nextJ]);
 			}
-			else{
-				if(i==0&&j==0){//top left corner
-				   nCurr.add(nodes[i+1][j]);
-				   nCurr.add(nodes[i][j+1]);
-				}
-				else{
-					if(i==0&&j==n-1){//top righ corner
-					  nCurr.add(nodes[i+1][j]);
-					  nCurr.add(nodes[i][j-1]);
-					 
-					}
-					else{
-					  if(i==n-1&&j==n-1){//bottom right corner
-						 nCurr.add(nodes[i-1][j]);
-						 nCurr.add(nodes[i][j-1]);
-					  }
-					  else{
-						 if(i==n-1&&j==0){//bottom left corner
-						   nCurr.add(nodes[i][j+1]);
-						   nCurr.add(nodes[i-1][j]);
-						 }
-						 else{
-							nCurr.add(nodes[i+1][j]);
-							nCurr.add(nodes[i][j+1]);
-							nCurr.add(nodes[i][j-1]);
-							nCurr.add(nodes[i-1][j]);
-						 }
-					 }
-				  }
-			  }
-		  }
-	  }
-		  
-	  nCurr.setCostUntilEnd((float)Math.floor(2*(n-1)-i-j));
-      
+		}
+	}
+	  nCurr.setCostUntilEnd(n-i-j);
 	}
    
 	public Node[][] getArray(){
@@ -290,42 +259,42 @@ class Graph{
 		int d=nodes[n-1][n-1].getDistance();
 		//System.out.println("dijktra sol:"+d);//------------------
 		//System.out.println();//------------------
-	   return d==Integer.MAX_VALUE?0:d;
+		return d==Integer.MAX_VALUE?0:d;
 	}
 	
 	private void insertOpenList(Node n){
-        int min=0;
-        int max=openedList.size()-1;
-        int middle=(min+max)/2;
-        
-        while(min<max){
+		int min=0;
+		int max=openedList.size()-1;
+		int middle=(min+max)/2;
+
+		while(min<max){
 			if(openedList.get(middle).getHeuCost()>n.getHeuCost()){
-			  max=middle-1;
+				  max=middle-1;
 			}
 			else{
-			   if(openedList.get(middle).getHeuCost()<n.getHeuCost()){
-				  min=middle+1;
-			  }
-			  else{
-				  min=middle;
-				  max=middle;
-			  }
+				if(openedList.get(middle).getHeuCost()<n.getHeuCost()){
+					  min=middle+1;
+				}
+				else{
+					  min=middle;
+					  max=middle;
+				  }
 			}
 			middle=(min+max)/2;
-        }
-        
+		}
+
 		if(openedList.size()>0){
-		  if(n.getHeuCost()>=openedList.get(middle).getHeuCost()){
-				 openedList.add(middle+1,n);
-		  }
-		  else{
-			   openedList.add(middle,n);
-		  }
+			if(n.getHeuCost()>=openedList.get(middle).getHeuCost()){
+				openedList.add(middle+1,n);
+			}
+			else{
+				openedList.add(middle,n);
+			}
 		}
 		else{
-		openedList.add(n);
+			openedList.add(n);
 		}
-    }
+	}
 	
 	private void addOpenL(Node n){
 		if(!n.isInClosedList()){
@@ -357,7 +326,7 @@ class Graph{
 	   openedList.stream().forEach(System.out::print);
 	   System.out.println();
 	}
-  
+
 	private Node bestChoise(Node n){
 	   if(openedList.size()>0){
 			 List<Node> l=openedList.stream().filter(e->e.getHeuCost()==openedList.get(0).getHeuCost())
@@ -383,7 +352,7 @@ class Graph{
 		   currNode.setArcs(new ArrayList<>());
 		   createArcs(currNode.getI(), currNode.getJ());
 		 }
-		 
+
 		 for(int i=0;i<currNode.getArcs().size();i++){
 			   Arc a= currNode.getArcs().get(i);
 			   Node n=a.getNode();
@@ -412,7 +381,7 @@ class Graph{
 		 if(bChoise!=null){
 			  addClosedL(bChoise);
 			  currNode=getCurrElem();
-			  
+
 		 }  
 	   }while(bChoise!=null&&bChoise!=end);
 
