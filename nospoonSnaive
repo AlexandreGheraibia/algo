@@ -95,7 +95,7 @@ class Player {
         
         String line; // width characters, each either 0 or .
         boolean droit;
-        //construction de toute les branches droites
+        //construction de toutes les branches droites
         List<Leaf>arbre=new ArrayList<>();
         
         for (int i = 0; i < height; i++) {
