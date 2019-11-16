@@ -27,7 +27,6 @@ class Node{
    private int value=Integer.MAX_VALUE;
    private List<Arc>arcs=null;
    private int distance=Integer.MAX_VALUE;
-   private boolean inP=false;
    private boolean inOpened=false;
    private boolean inClosed=false;
    private float costSS=0; //effectif cost since Start
@@ -192,7 +191,7 @@ class Graph{
       return nodes;
     }
      
-    private void createArcs(int i, int j){
+  private void createArcs(int i, int j){
 	Node nCurr= nodes[i][j];
 	int tab[]=new int[]{-1,1};
 	int nextI,nextJ;
