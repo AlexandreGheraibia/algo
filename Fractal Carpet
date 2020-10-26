@@ -108,7 +108,7 @@ class Solution {
     }
 
    
-    public static void dealWithSquare(Point p,long size,long level,Square s){
+    public static void walkthroughSquare(Point p,long size,long level,Square s){
         long subSize=size/3;
         Point p3=Point.newObj(p.x()+subSize,p.y()+subSize);
          if(s.hasTo(p3)){
@@ -121,7 +121,7 @@ class Solution {
                     c=(long)Math.floor(j/3)+j%3;
                     p3.x(p.x()+l*subSize).y(p.y()+c*subSize);
                     if(s.hasTo(p3)){
-                    dealWithSquare(p3,subSize,level-1,s);
+                    walkthroughSquare(p3,subSize,level-1,s);
                         
                     }  
             }
@@ -143,7 +143,7 @@ class Solution {
         p1= Point.newObj(x1,y1);
         p2= Point.newObj(x2,y2);
         Square s=Square.newObj(p1, p2);
-        dealWithSquare(Point.newObj(0,0),sideSize,L,s);
+        walkthroughSquare(Point.newObj(0,0),sideSize,L,s);
         System.err.println(L);
         System.err.println("x1:"+x1+" y1:"+y1);
         System.err.println("x2:"+x2+" y2:"+y2);
