@@ -1,0 +1,154 @@
+import java.util.*;
+
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+
+
+// Builder Pattern
+class Point {
+        private long x,y;
+
+        private static class Builder{
+            private final long x,y;
+            public Builder(long val,long val2){
+                x=val;
+                y=val2;
+            }
+            Point build(){
+                return new Point(this);
+            }
+        }
+        //not in the pattern
+        public static Point Make(long x, long y){
+            return new Builder(x,y).build();
+        } 
+        public Point x(long val){
+            x=val;
+            return this ;
+        }
+
+        public Point y(long val){
+            y=val;
+            return this;
+        }
+
+        public long x(){
+            return  x;
+        }
+
+        public long y(){
+            return y;
+        }
+
+        private Point(Builder b){
+                x=b.x;
+                y=b.y;
+        }
+}
+// Builder Pattern
+class Square{
+
+        private Point p1,p2;
+
+        private static class Builder{
+            private final Point p1,p2;
+            Builder(Point v1,Point v2){
+                p1=v1;
+                p2=v2;
+             }
+             Square build(){
+                 return new Square(this);
+             }
+        }
+        //not in the pattern
+        public static Square Make(Point p1, Point p2){
+                return new Builder(p1,p2).build();
+        } 
+
+        Square(Builder b){
+            p1=b.p1;
+            p2=b.p2;
+        }
+        
+        public Boolean hasTo(Point p){
+             return p.x()>=p1.x()&&p.x()<=p2.x()&&p.y()>=p1.y()&&p.y()<=p2.y();
+        }
+
+        public Square p1(Point p){
+            p1=p; return this;
+        }
+        public Square p2(Point p){
+            p2=p; return this;
+        }
+
+        public Point p1(){
+            return p1;
+        }
+        public Point p2(){
+            return p2;
+        }
+
+}
+
+class Solution {
+
+    
+ 
+    public static void vide(Point p,long length,Square s){
+        
+        for(long j=0;j<length*length;j++){
+               
+                    System.err.print("+");
+                
+            }
+            
+    }
+
+   
+    public static void dealWithSquare(Point p,long size,long level,Square s){
+        long subSize=size/3;
+        Point p3=Point.Make(p.x()+subSize,p.y()+subSize);
+         if(s.hasTo(p3)){
+              vide(p3,subSize,s);
+         }
+        if(level!=0){
+            long l,c;
+            for(int j=0;j<9;j++){
+                    l=(long)Math.floor(j/3);
+                    c=(long)Math.floor(j/3)+j%3;
+                    p3.x(p.x()+l*subSize).y(p.y()+c*subSize);
+                    if(s.hasTo(p3)){
+                    dealWithSquare(p3,subSize,level-1,s);
+                        
+                    }  
+            }
+        }
+    }
+    
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int L = in.nextInt();
+        long x1 = in.nextLong();
+        long y1 = in.nextLong();
+        long x2 = in.nextLong();
+        long y2 = in.nextLong();
+        
+        int sideSize=(int)Math.pow(3,L);
+        
+        //int [][] map=new int[sideSize][sideSize];
+        Point p1,p2;
+        p1= Point.Make(x1,y1);
+        p2= Point.Make(x2,y2);
+        Square s=Square.Make(p1, p2);
+        dealWithSquare(Point.Make(0,0),sideSize,L,s);
+        System.err.println(L);
+        System.err.println("x1:"+x1+" y1:"+y1);
+        System.err.println("x2:"+x2+" y2:"+y2);
+        
+      
+       
+    }
+}
