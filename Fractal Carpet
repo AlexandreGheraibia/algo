@@ -68,7 +68,7 @@ class Square{
                 return new Builder(p1,p2).build();
         } 
 
-        Square(Builder b){
+        private Square(Builder b){
             p1=b.p1;
             p2=b.p2;
         }
