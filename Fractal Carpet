@@ -22,7 +22,7 @@ class Point {
             }
         }
         //not in the pattern
-        public static Point Make(long x, long y){
+        public static Point Create(long x, long y){
             return new Builder(x,y).build();
         } 
         public Point x(long val){
@@ -64,7 +64,7 @@ class Square{
              }
         }
         //not in the pattern
-        public static Square Make(Point p1, Point p2){
+        public static Square Create(Point p1, Point p2){
                 return new Builder(p1,p2).build();
         } 
 
