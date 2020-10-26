@@ -22,7 +22,7 @@ class Point {
             }
         }
         //not in the pattern
-        public static Point makeObj(long x, long y){
+        public static Point newObj(long x, long y){
             return new Builder(x,y).build();
         } 
         public Point x(long val){
@@ -64,7 +64,7 @@ class Square{
              }
         }
         //not in the pattern
-        public static Square makeObj(Point p1, Point p2){
+        public static Square newObj(Point p1, Point p2){
                 return new Builder(p1,p2).build();
         } 
 
@@ -110,7 +110,7 @@ class Solution {
    
     public static void dealWithSquare(Point p,long size,long level,Square s){
         long subSize=size/3;
-        Point p3=Point.makeObj(p.x()+subSize,p.y()+subSize);
+        Point p3=Point.newObj(p.x()+subSize,p.y()+subSize);
          if(s.hasTo(p3)){
               vide(p3,subSize,s);
          }
@@ -140,10 +140,10 @@ class Solution {
         
         //int [][] map=new int[sideSize][sideSize];
         Point p1,p2;
-        p1= Point.makeObj(x1,y1);
-        p2= Point.makeObj(x2,y2);
-        Square s=Square.makeObj(p1, p2);
-        dealWithSquare(Point.makeObj(0,0),sideSize,L,s);
+        p1= Point.newObj(x1,y1);
+        p2= Point.newObj(x2,y2);
+        Square s=Square.newObj(p1, p2);
+        dealWithSquare(Point.newObj(0,0),sideSize,L,s);
         System.err.println(L);
         System.err.println("x1:"+x1+" y1:"+y1);
         System.err.println("x2:"+x2+" y2:"+y2);
