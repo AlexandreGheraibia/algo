@@ -47,6 +47,10 @@ class Point {
                 x=b.x;
                 y=b.y;
         }
+        @Override
+        public String toString(){
+                return x+" "+y+"\n";
+        }
 }
 // Builder Pattern
 class Square{
@@ -64,7 +68,7 @@ class Square{
              }
         }
         //not in the pattern
-        public static Square newObj(Point p1, Point p2){
+        static public Square newObj(Point p1, Point p2){
                 return new Builder(p1,p2).build();
         } 
 
@@ -73,8 +77,43 @@ class Square{
             p2=b.p2;
         }
         
-        public Boolean hasTo(Point p){
-             return p.x()>=p1.x()&&p.x()<=p2.x()&&p.y()>=p1.y()&&p.y()<=p2.y();
+        public Boolean contain(Point p){
+          /*  System.err.println(p1.x()+" "+p1.y());
+            System.err.println(p.x()+" "+p.y());
+            System.err.println(p2.x()+" "+p2.y());
+            System.err.println(contain(p,this.p1,this.p2));
+            System.err.println();*/
+            return contain(p,this.p1,this.p2);
+        }
+
+        public Boolean contain(long x, long y){
+            return contain(x,y,this.p1,this.p2);
+        }
+
+        
+        static public Boolean contain(long x,long y, Point p1,Point p2){
+            return contain(x, y, p1.x(), p1.y(), p2.x(), p2.y());
+        }
+
+        static public Boolean contain(Point p,Point p1,Point p2){
+            return contain(p.x(), p.y(), p1, p2);
+        }
+
+        static public Boolean contain(long x, long y, long x1, long y1, long x2, long y2){
+            boolean b=x>=x1&&x<=x2&&y>=y1&&y<=y2;
+             return b;
+        }
+
+        static public Boolean contain(Point p, Point p1, long size){
+            return contain(p.x(),p.y(), p1.x(), p1.y(), size);
+        }
+        static public Boolean contain(Point p, long x1, long y1, long size){
+            return contain(p.x(),p.y(), x1, y1, size);
+        }
+
+        static public Boolean contain(long x, long y, long x1, long y1, long size){
+           boolean b= x>=x1&&x<=x1+size&&y>=y1&&y<=y1+size;
+           return b;
         }
 
         public Square p1(Point p){
@@ -97,33 +136,43 @@ class Solution {
 
     
  
-    public static void vide(Point p,long length,Square s){
+    public static void draw(Point p,long length,Square s,char c){
         
-        for(long j=0;j<length*length;j++){
+        for(long i=0;i<length*3;i++){
+             for(long j=0;j<length*3;j++){
+                 if(i>length-1&&j>length-1&&i<2*length&&j<2*length){
+                    System.err.print(c);
+                 }
+                 else{
+                    System.err.print('0');
+                 }
                
-                    System.err.print("+");
-                
             }
+             System.err.print('\n');
+        }
             
     }
 
    
-    public static void walkthroughSquare(Point p,long size,long level,Square s){
+    public static void dealWithSquare(Point p,long size,long level,Square s){
         long subSize=size/3;
         Point p3=Point.newObj(p.x()+subSize,p.y()+subSize);
-         if(s.hasTo(p3)){
-              vide(p3,subSize,s);
+         if(s.contain(p3)
+         ||Square.contain(s.p1(),p3,subSize)
+         ||Square.contain(s.p2(),p3,subSize)){
+             draw(p3,subSize,s,'+');
          }
+        
+
         if(level!=0){
             long l,c;
             for(int j=0;j<9;j++){
                     l=(long)Math.floor(j/3);
-                    c=(long)Math.floor(j/3)+j%3;
+                    c=j%3;
                     p3.x(p.x()+l*subSize).y(p.y()+c*subSize);
-                    if(s.hasTo(p3)){
-                    walkthroughSquare(p3,subSize,level-1,s);
+                    dealWithSquare(p3,subSize,level-1,s);
                         
-                    }  
+                    
             }
         }
     }
@@ -136,17 +185,19 @@ class Solution {
         long x2 = in.nextLong();
         long y2 = in.nextLong();
         
-        int sideSize=(int)Math.pow(3,L);
+        long sideSize=(long)Math.pow(3,L);
         
         //int [][] map=new int[sideSize][sideSize];
         Point p1,p2;
         p1= Point.newObj(x1,y1);
         p2= Point.newObj(x2,y2);
         Square s=Square.newObj(p1, p2);
-        walkthroughSquare(Point.newObj(0,0),sideSize,L,s);
+        dealWithSquare(Point.newObj(0,0),sideSize,L,s);
         System.err.println(L);
-        System.err.println("x1:"+x1+" y1:"+y1);
-        System.err.println("x2:"+x2+" y2:"+y2);
+        System.err.println("p1.x: "+p1.x()+" P1.y:"+p1.y());
+        System.err.println("p2.x: "+p2.x()+" P2.y:"+p2.y());
+        System.err.println("sideSize: "+sideSize);
+        
         
       
        
