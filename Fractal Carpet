@@ -171,8 +171,8 @@ class Solution {
     static int [][] map;
      public static void display( int b){
         
-        for(int i=0;i<map.length;i++){
-             for(int j=0;j<map[0].length;j++){
+        for(int i=0;i<map.length-9;i++){
+             for(int j=0;j<map[0].length-9;j++){
                 if(b==1){
                    System.out.print(map[i][j]==0?'0':'+');
                  }
@@ -296,8 +296,11 @@ class Solution {
         long sideSize=(long)Math.pow(3,L);
         Point p1,p2;
         p1= Point.newObj(x1,y1);
-        p2= Point.newObj(x2,y2);
-        map=new int[(int)p1.deltaY(p2)+1][(int)p1.deltaX(p2)+1];
+        p2= Point.newObj(x2+9,y2+9);
+        int l=(int)p1.deltaY(p2)+1,c=(int)p1.deltaX(p2)+1;
+       
+        map=new int[l][c];
+
         Square s=Square.newObj(p1, p2);
         dealWithSquare(Point.newObj(0,0),sideSize,L,s);
         System.err.println(L);
@@ -306,7 +309,8 @@ class Solution {
         System.err.println("sideSize: "+sideSize);
         
         display(1);
-      
+        System.err.println(c);
+        System.err.println(l);
        
     }
 }
