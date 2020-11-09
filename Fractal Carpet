@@ -13,17 +13,35 @@ class Point {
 
         private static class Builder{
             private final long x,y;
+
+            public Builder(Point toCopyFrom){
+                 x=toCopyFrom.x();
+                 y=toCopyFrom.y();
+            }
+
             public Builder(long val,long val2){
                 x=val;
                 y=val2;
             }
+            
             Point build(){
                 return new Point(this);
             }
+        
         }
+        
+        private Point(Builder b){
+                x=b.x;
+                y=b.y;
+        }
+
         //not in the pattern
         public static Point newObj(long x, long y){
             return new Builder(x,y).build();
+        } 
+        
+        public static Point copyFrom(Point p){
+            return new Builder(p).build();
         } 
         public Point x(long val){
             x=val;
@@ -42,11 +60,23 @@ class Point {
         public long y(){
             return y;
         }
-
-        private Point(Builder b){
-                x=b.x;
-                y=b.y;
+        
+        public long deltaX(Point p){
+            return  deltaX(this,p);
         }
+
+        public long deltaY(Point p){
+            return  deltaY(this,p);
+        }
+
+        static public long deltaX(Point p,Point p1){    
+            return p.x>p1.x?p.x-p1.x:p1.x-p.x;
+        }
+
+        static public long deltaY(Point p,Point p1){    
+            return p.y>p1.y?p.y-p1.y:p1.y-p.y;
+        }
+
         @Override
         public String toString(){
                 return x+" "+y+"\n";
@@ -67,16 +97,17 @@ class Square{
                  return new Square(this);
              }
         }
+        
+        private Square(Builder b){
+            p1=b.p1;
+            p2=b.p2;
+        }
         //not in the pattern
         static public Square newObj(Point p1, Point p2){
                 return new Builder(p1,p2).build();
         } 
 
-        private Square(Builder b){
-            p1=b.p1;
-            p2=b.p2;
-        }
-        
+       
         public Boolean contain(Point p){
           /*  System.err.println(p1.x()+" "+p1.y());
             System.err.println(p.x()+" "+p.y());
@@ -86,36 +117,38 @@ class Square{
             return contain(p,this.p1,this.p2);
         }
 
-        public Boolean contain(long x, long y){
+     
+        public boolean contain(long x, long y){
             return contain(x,y,this.p1,this.p2);
         }
 
         
-        static public Boolean contain(long x,long y, Point p1,Point p2){
+        static public boolean contain(long x,long y, Point p1,Point p2){
             return contain(x, y, p1.x(), p1.y(), p2.x(), p2.y());
         }
 
-        static public Boolean contain(Point p,Point p1,Point p2){
+        static public boolean contain(Point p,Point p1,Point p2){
             return contain(p.x(), p.y(), p1, p2);
         }
 
-        static public Boolean contain(long x, long y, long x1, long y1, long x2, long y2){
-            boolean b=x>=x1&&x<=x2&&y>=y1&&y<=y2;
-             return b;
+        static public boolean contain(long x, long y, long x1, long y1, long x2, long y2){
+            return contains(x, y, x1, y1, (x2-x1)>0?(x2-x1):(x1-x2),(y2-y1)>0?(y2-y1):(y1-y2));
         }
 
-        static public Boolean contain(Point p, Point p1, long size){
+        static public boolean contain(Point p, Point p1, long size){
             return contain(p.x(),p.y(), p1.x(), p1.y(), size);
         }
-        static public Boolean contain(Point p, long x1, long y1, long size){
+        static public boolean contain(Point p, long x1, long y1, long size){
             return contain(p.x(),p.y(), x1, y1, size);
         }
 
-        static public Boolean contain(long x, long y, long x1, long y1, long size){
-           boolean b= x>=x1&&x<=x1+size&&y>=y1&&y<=y1+size;
-           return b;
+        static public boolean contain(long x, long y, long x1, long y1, long size){
+           return contains(x, y, x1, y1, size,size);
         }
 
+        static public boolean contains(long x, long y, long x1, long y1, long sizeX,long sizeY){
+           return x>=x1&&x<x1+sizeX&&y>=y1&&y<y1+sizeY;
+        }
         public Square p1(Point p){
             p1=p; return this;
         }
@@ -135,47 +168,118 @@ class Square{
 class Solution {
 
     
- 
-    public static void draw(Point p,long length,Square s,char c){
+    static int [][] map;
+     public static void display( int b){
         
-        for(long i=0;i<length*3;i++){
-             for(long j=0;j<length*3;j++){
-                 if(i>length-1&&j>length-1&&i<2*length&&j<2*length){
-                    System.err.print(c);
+        for(int i=0;i<map.length;i++){
+             for(int j=0;j<map[0].length;j++){
+                if(b==1){
+                   System.out.print(map[i][j]==0?'0':'+');
                  }
                  else{
-                    System.err.print('0');
+                    System.err.print(map[i][j]==0?'0':'+');
                  }
-               
             }
-             System.err.print('\n');
+            if(b==1){
+                System.out.println();
+            }
+            else{
+                System.err.println();
+            }
+            
         }
             
+    }
+    public static void affect(Point p,long length,Square s){
+        long l3=length;  
+        
+        System.err.println("------------------------------------------------------------");
+        System.err.println(map[0].length+" "+map.length);
+        Point p1=Point.copyFrom(s.p1()),p2=Point.copyFrom(s.p2());
+        if(p2.x()>p.x()+l3||p2.x()==p.x()){
+            p2.x(p.x()+l3);
+        }
+        p2.x(p2.deltaX(p1));    
+       
+        if(p2.y()>=p.y()+l3||p2.y()==p.y()){
+            p2.y(p.y()+l3);
+        }
+        p2.y(p2.deltaY(p1));    
+     
+        if(p1.x()<=p.x()){
+         
+            p1.x(p1.deltaX(p)); 
+        }
+        else{
+             p1.x(0); 
+        }
+       
+        if(p1.y()<=p.y()){
+          
+             p1.y(p1.deltaY(p));
+        }
+        else{
+             p1.y(0); 
+        }
+      
+
+        System.err.println("p1: "+p1);
+         System.err.println("p2: "+p2);
+         System.err.println("p: "+p);
+       
+        for(long i=p1.y();i<Math.min(p2.y(),map.length);i++){
+             for(long j=p1.x();j<Math.min(p2.x(),map[0].length);j++){
+               map[(int)(i)][(int)(j)]=1;
+            }
+             
+        }
+           //  display(0);
     }
 
    
     public static void dealWithSquare(Point p,long size,long level,Square s){
         long subSize=size/3;
-        Point p3=Point.newObj(p.x()+subSize,p.y()+subSize);
-         if(s.contain(p3)
-         ||Square.contain(s.p1(),p3,subSize)
-         ||Square.contain(s.p2(),p3,subSize)){
-             draw(p3,subSize,s,'+');
-         }
-        
-
         if(level!=0){
-            long l,c;
-            for(int j=0;j<9;j++){
-                    l=(long)Math.floor(j/3);
-                    c=j%3;
-                    p3.x(p.x()+l*subSize).y(p.y()+c*subSize);
-                    dealWithSquare(p3,subSize,level-1,s);
+            
+            Point p3 =Point.newObj(p.x()+subSize,p.y()+subSize);
+            Point p4 =Point.newObj(p.x()+2*subSize,p.y()+subSize);
+            Point p5 =Point.newObj(p.x()+subSize,p.y()+2*subSize);
+            Point p6 =Point.newObj(p.x()+2*subSize,p.y()+2*subSize);
+            
+            Point sP1 =Point.newObj(s.p1().x()+s.p1().deltaX(s.p2()),s.p1().y());
+            Point sP2 =Point.newObj(s.p1().x(),s.p1().y()+s.p1().deltaY(s.p2()));
+            for(int i=0;i<=3;i++){
+                for(int j=0;j<=3;j++){
+                   
+                    p3.x(p.x()+i*subSize).y(p.y()+j*subSize);
+                    p4.x(p.x()+i*subSize+subSize).y(p.y()+j*subSize);
+                    p5.x(p.x()+i*subSize).y(p.y()+j*subSize+subSize);
+                    p6.x(p.x()+i*subSize+subSize).y(p.y()+j*subSize+subSize);
+                /* System.err.println(Square.contain(s.p1(),p3,subSize)+" "+p3.x()+"<"+s.p1().x()+"<"+(p3.x()+subSize)+"\n"+ p3.y()+"<"+s.p1().y()+"<"+(p3.y()+subSize));
+                    System.err.println(Square.contain(s.p2(),p3,subSize));
+                    System.err.println(Square.contain(sP1,p3,subSize));
+                    System.err.println(Square.contain(sP2,p3,subSize));*/
+
+                    if(s.contain(p3)||s.contain(p4)||s.contain(p5)||s.contain(p6)||Square.contain(s.p1(),p3,subSize)||Square.contain(s.p2(),p3,subSize)
+                    ||Square.contain(sP1,p3,subSize)||Square.contain(sP2,p3,subSize)){
+                        if(!(i==1&&j==1)){
+                            /* System.err.println("level:"+level);
+                            System.err.println("colum:"+c);
+                            System.err.println("line :"+l);*/
                         
-                    
+                        dealWithSquare(p3,subSize,level-1,s);
+                        } 
+                        else{
+                        
+                            affect(p3,subSize,s);
+                        }    
+                    }
+                }
             }
         }
+        
     }
+            
     
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
@@ -184,13 +288,16 @@ class Solution {
         long y1 = in.nextLong();
         long x2 = in.nextLong();
         long y2 = in.nextLong();
-        
+      /*  L=2;
+        x1=0;
+        y1=0;
+        x2=(long)(2*Math.pow(3,L)/3-1);
+        y2=(long)Math.pow(3,L)/3-1;*/
         long sideSize=(long)Math.pow(3,L);
-        
-        //int [][] map=new int[sideSize][sideSize];
         Point p1,p2;
         p1= Point.newObj(x1,y1);
         p2= Point.newObj(x2,y2);
+        map=new int[(int)p1.deltaY(p2)+1][(int)p1.deltaX(p2)+1];
         Square s=Square.newObj(p1, p2);
         dealWithSquare(Point.newObj(0,0),sideSize,L,s);
         System.err.println(L);
@@ -198,7 +305,7 @@ class Solution {
         System.err.println("p2.x: "+p2.x()+" P2.y:"+p2.y());
         System.err.println("sideSize: "+sideSize);
         
-        
+        display(1);
       
        
     }
