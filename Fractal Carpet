@@ -156,7 +156,7 @@ class Square{
     static public boolean contains(long x, long y, long x1, long y1, long sizeX,long sizeY){
         return x>=x1&&x<x1+sizeX&&y>=y1&&y<y1+sizeY;
     }
-
+    
     public Square p1(Point p){
         p1=p; return this;
     }
@@ -179,19 +179,20 @@ class Solution {
 
     
     static int [][] map;
+    static int padding=0;
 
-    public static void display( int b){
+    public static void display(boolean b){
         
-        for(int i=0;i<map.length-9;i++){
-            for(int j=0;j<map[0].length-9;j++){
-                if(b==1){
+        for(int i=padding;i<map.length-padding;i++){
+            for(int j=padding;j<map[0].length-padding;j++){
+                if(b){
                     System.out.print(map[i][j]==0?'0':'+');
                 }
                 else{
                     System.err.print(map[i][j]==0?'0':'+');
                 }
             }
-            if(b==1){
+            if(b){
                 System.out.println();
             }
             else{
@@ -204,17 +205,17 @@ class Solution {
 
     public static void affect(Point p,long length,Square s){
         
-        long l3=length;  
+        long l=length;  
         Point p1=Point.copyFrom(s.p1()),p2=Point.copyFrom(s.p2());
 
-        if(p2.x()>p.x()+l3||p2.x()==p.x()){
-            p2.x(p.x()+l3);
+        if(p2.x()>p.x()+l||p2.x()==p.x()){
+            p2.x(p.x()+l);
         }
 
         p2.x(p2.deltaX(p1));    
        
-        if(p2.y()>=p.y()+l3||p2.y()==p.y()){
-            p2.y(p.y()+l3);
+        if(p2.y()>=p.y()+l||p2.y()==p.y()){
+            p2.y(p.y()+l);
         }
         
         p2.y(p2.deltaY(p1));    
@@ -241,25 +242,23 @@ class Solution {
     }
 
    
-    public static void dealWithSquare(Point p,long size,long level,Square s){
-        long subSize=size/3;
+    public static void walkthroughSquare(Point p,long size,long level,Square s){
+        long subSize=size/3;       
         if(level!=0){
             Point p3 =Point.newObj();
             Point p4 =Point.newObj();
             Point p5 =Point.newObj();
             Point p6 =Point.newObj();
-            Point sP1 =Point.newObj();
-            Point sP2 =Point.newObj();
-            for(int i=0;i<=3;i++){
-                for(int j=0;j<=3;j++){
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
                     p3.x(p.x()+i*subSize).y(p.y()+j*subSize);
-                    p4.x(p.x()+i*subSize+subSize).y(p.y()+j*subSize);
-                    p5.x(p.x()+i*subSize).y(p.y()+j*subSize+subSize);
-                    p6.x(p.x()+i*subSize+subSize).y(p.y()+j*subSize+subSize);
-                    if(s.contain(p3)||s.contain(p4)||s.contain(p5)||s.contain(p6)||Square.contain(s.p1(),p3,subSize)||Square.contain(s.p2(),p3,subSize)
-                    ||Square.contain(sP1,p3,subSize)||Square.contain(sP2,p3,subSize)){
+                    p4.x(p3.x()+subSize).y(p3.y());
+                    p5.x(p3.x()).y(p3.y()+subSize);
+                    p6.x(p3.x()+subSize).y(p3.y()+subSize);
+                    if(s.contain(p3)||s.contain(p4)||s.contain(p5)||s.contain(p6)
+                        ||Square.contain(s.p1(),p3,subSize)||Square.contain(s.p2(),p3,subSize)){
                         if(!(i==1&&j==1)){
-                            dealWithSquare(p3,subSize,level-1,s);
+                            walkthroughSquare(p3,subSize,level-1,s);
                         } 
                         else{
                             affect(p3,subSize,s);
@@ -269,7 +268,20 @@ class Solution {
             }
         }
     }
-            
+
+    static long powerN(long number, int power){
+    //https://stackoverflow.com/questions/29996070/using-int-double-and-long-in-calculation-of-powers
+        long res = 1;
+        long sq = number;
+        while(power > 0){
+            if(power % 2 == 1){
+                res *= sq; 
+            }
+            sq = sq * sq;
+            power /= 2;
+        }
+        return res;
+    }       
     
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
@@ -278,14 +290,16 @@ class Solution {
         long y1 = in.nextLong();
         long x2 = in.nextLong();
         long y2 = in.nextLong();
-        long sideSize=(long)Math.pow(3,L);
+        long sideSize= powerN(3,L);
         Point p1,p2;
-        p1= Point.newObj(x1,y1);
-        p2= Point.newObj(x2+9,y2+9);
+        padding=10;
+        p1= Point.newObj(x1-padding,y1-padding);
+        p2= Point.newObj(x2+padding,y2+padding);
         int l=(int)p1.deltaY(p2)+1,c=(int)p1.deltaX(p2)+1;
         map=new int[l][c];
         Square s=Square.newObj(p1, p2);
-        dealWithSquare(Point.newObj(0,0),sideSize,L,s);  
-        display(1);
+        walkthroughSquare(Point.newObj(0,0),sideSize,L,s);  
+        display(true);
+        
     }
 }
