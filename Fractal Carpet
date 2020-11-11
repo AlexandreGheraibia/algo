@@ -242,8 +242,8 @@ class Solution {
     }
 
    
-    public static void walkthroughSquare(Point p,long size,long level,Square s){
-        long subSize=size/3;       
+    public static void walkthroughSquare(Point p,long side,long level,Square s){
+        long subSide=side/3;       
         if(level!=0){
             Point p3 =Point.newObj();
             Point p4 =Point.newObj();
@@ -251,17 +251,17 @@ class Solution {
             Point p6 =Point.newObj();
             for(int i=0;i<3;i++){
                 for(int j=0;j<3;j++){
-                    p3.x(p.x()+i*subSize).y(p.y()+j*subSize);
-                    p4.x(p3.x()+subSize).y(p3.y());
-                    p5.x(p3.x()).y(p3.y()+subSize);
-                    p6.x(p3.x()+subSize).y(p3.y()+subSize);
+                    p3.x(p.x()+i*subSide).y(p.y()+j*subSide);
+                    p4.x(p3.x()+subSide).y(p3.y());
+                    p5.x(p3.x()).y(p3.y()+subSide);
+                    p6.x(p3.x()+subSide).y(p3.y()+subSide);
                     if(s.contain(p3)||s.contain(p4)||s.contain(p5)||s.contain(p6)
-                        ||Square.contain(s.p1(),p3,subSize)||Square.contain(s.p2(),p3,subSize)){
+                        ||Square.contain(s.p1(),p3,subSide)||Square.contain(s.p2(),p3,subSide)){
                         if(!(i==1&&j==1)){
-                            walkthroughSquare(p3,subSize,level-1,s);
+                            walkthroughSquare(p3,subSide,level-1,s);
                         } 
                         else{
-                            affect(p3,subSize,s);
+                            affect(p3,subSide,s);
                         }    
                     }
                 }
