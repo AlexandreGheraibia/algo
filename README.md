@@ -1,1 +1,1 @@
-# some solutions for the coding game puzzles
+# some solutions from the coding game puzzles
